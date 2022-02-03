@@ -5,45 +5,69 @@ parameter REG_SIZE = 32;
 input clk;
 input	reset_n;
 
-reg [15:0] gp_le;
-reg pc_le;
-reg ir_le;
-reg y_le;
-reg z_le;
-reg mar_le;
-reg hi_le;
-reg lo_le;
-reg mdr_in;
+wire [15:0] gp_le;
+wire pc_le;
+wire ir_le;
+wire y_le;
+wire z_le;
+wire mar_le;
+wire hi_le;
+wire lo_le;
+wire mdr_in;
 
-reg md_mux_select;
+wire md_mux_select;
 
-reg [REG_SIZE-1:0] bus_data;
-reg [REG_SIZE-1:0] m_data_in;
-reg [REG_SIZE-1:0] mdr_output;
+wire [REG_SIZE-1:0] bus_data;
+wire [REG_SIZE-1:0] m_data_in;
+wire [REG_SIZE-1:0] mdr_output;
 
-reg [REG_SIZE-1:0] r0_data_out;
-reg [REG_SIZE-1:0] r1_data_out;
-reg [REG_SIZE-1:0] r2_data_out;
-reg [REG_SIZE-1:0] r3_data_out;
-reg [REG_SIZE-1:0] r4_data_out;
-reg [REG_SIZE-1:0] r5_data_out;
-reg [REG_SIZE-1:0] r6_data_out;
-reg [REG_SIZE-1:0] r7_data_out;
-reg [REG_SIZE-1:0] r8_data_out;
-reg [REG_SIZE-1:0] r9_data_out;
-reg [REG_SIZE-1:0] r10_data_out;
-reg [REG_SIZE-1:0] r11_data_out;
-reg [REG_SIZE-1:0] r12_data_out;
-reg [REG_SIZE-1:0] r13_data_out;
-reg [REG_SIZE-1:0] r14_data_out;
-reg [REG_SIZE-1:0] r15_data_out;
-reg [REG_SIZE-1:0] pc_data_out;
-reg [REG_SIZE-1:0] ir_data_out;
-reg [REG_SIZE-1:0] y_data_out;
-reg [REG_SIZE-1:0] z_data_out;
-reg [REG_SIZE-1:0] mar_data_out;
-reg [REG_SIZE-1:0] hi_data_out;
-reg [REG_SIZE-1:0] lo_data_out;
+wire [REG_SIZE-1:0] r0_data_out;
+wire [REG_SIZE-1:0] r1_data_out;
+wire [REG_SIZE-1:0] r2_data_out;
+wire [REG_SIZE-1:0] r3_data_out;
+wire [REG_SIZE-1:0] r4_data_out;
+wire [REG_SIZE-1:0] r5_data_out;
+wire [REG_SIZE-1:0] r6_data_out;
+wire [REG_SIZE-1:0] r7_data_out;
+wire [REG_SIZE-1:0] r8_data_out;
+wire [REG_SIZE-1:0] r9_data_out;
+wire [REG_SIZE-1:0] r10_data_out;
+wire [REG_SIZE-1:0] r11_data_out;
+wire [REG_SIZE-1:0] r12_data_out;
+wire [REG_SIZE-1:0] r13_data_out;
+wire [REG_SIZE-1:0] r14_data_out;
+wire [REG_SIZE-1:0] r15_data_out;
+wire [REG_SIZE-1:0] pc_data_out;
+wire [REG_SIZE-1:0] ir_data_out;
+wire [REG_SIZE-1:0] y_data_out;
+wire [REG_SIZE-1:0] z_data_out;
+wire [REG_SIZE-1:0] mar_data_out;
+wire [REG_SIZE-1:0] hi_data_out;
+wire [REG_SIZE-1:0] lo_data_out;
+
+// temporary assignment statements
+genvar i;
+generate
+	for (i = 15; i >= 0; i = i - 1)
+	begin: gp_le_init_loop
+		assign gp_le[i] = 0;
+	end
+endgenerate
+assign pc_le = 0;
+assign ir_le = 0;
+assign y_le = 0;
+assign z_le = 0;
+assign mar_le = 0;
+assign hi_le = 0;
+assign lo_le = 0;
+assign mdr_in = 0;
+assign md_mux_select = 0;
+generate
+	for (i = REG_SIZE - 1; i >= 0; i = i - 1)
+	begin: m_data_in_init_loop
+		assign m_data_in[i] = 0;
+	end
+endgenerate
 
 gp_register r0[REG_SIZE-1:0](clk, reset_n, gp_le[0], bus_data, r0_data_out);
 gp_register r1[REG_SIZE-1:0](clk, reset_n, gp_le[1], bus_data, r1_data_out);
