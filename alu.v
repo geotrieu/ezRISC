@@ -7,8 +7,9 @@ input [REG_SIZE-1:0] y_data_in;
 input [REG_SIZE-1:0] bus_data_in;
 output reg [REG_SIZE + REG_SIZE -1:0] z_data_out;
 wire [REG_SIZE + REG_SIZE - 1:0] booth_data_out;
-
+wire [REG_SIZE - 1:0] div_data_out;
 booth_32x32_mult b_mult(booth_data_out, y_data_in, bus_data_in);
+divider_non_restoring divider(div_data_out, y_data_in, bus_data_in);
 // and 0000
 // or  0001
 // add 0010
@@ -51,7 +52,7 @@ begin
 		z_data_out <= booth_data_out;
 	
 	else if (ctrl_sig == 4'b1001) // div
-		z_data_out <= (y_data_in / bus_data_in);	
+		z_data_out <= div_data_out;
 		
 	else if (ctrl_sig == 4'b1010)	// neg
 		z_data_out <= (~y_data_in) + 1'b1;	
