@@ -41,7 +41,7 @@ set_global_assignment -name DEVICE EP3C16F484C6
 set_global_assignment -name TOP_LEVEL_ENTITY datapath
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION "13.0 SP1"
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "14:01:29  FEBRUARY 03, 2022"
-set_global_assignment -name LAST_QUARTUS_VERSION "13.0 SP1"
+set_global_assignment -name LAST_QUARTUS_VERSION 13.1
 set_global_assignment -name VERILOG_FILE mux_32bit_2to1.v
 set_global_assignment -name VERILOG_FILE mdr.v
 set_global_assignment -name VERILOG_FILE gp_register.v
@@ -67,6 +67,8 @@ set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name VERILOG_FILE mux_32bit_32to1.v
 set_global_assignment -name VERILOG_FILE enc_32to5.v
 set_global_assignment -name VERILOG_FILE datapath_tb.v
+set_global_assignment -name VERILOG_FILE booth_32x32_mult.v
+set_global_assignment -name VERILOG_FILE divider_non_restoring.v
 set_global_assignment -name EDA_TEST_BENCH_NAME datapath_tb -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "500 ns" -section_id datapath_tb

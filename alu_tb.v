@@ -10,8 +10,8 @@ wire[31:0] result;
 alu test_unit(ALU_ctrl, A, B, result);
 
 initial begin
-A = 32'h0A;
-B = 32'h02;
+A = 10'b0010110101;
+B = 4'b1101;
 ALU_ctrl = 4'h0;
 
 #10;
@@ -24,8 +24,44 @@ ALU_ctrl = 4'h2;
 
 #10;
 
-A = 32'hFFFFFFFF;
-B = 32'hFFFFFFFF;
+ALU_ctrl = 4'h3;
+
+#10;
+
+ALU_ctrl = 4'h4;
+
+#10;
+
+ALU_ctrl = 4'h5;
+
+#10;
+
+ALU_ctrl = 4'h6;
+
+#10;
+
+ALU_ctrl = 4'h7;
+
+#10;
+
+ALU_ctrl = 4'h8;
+
+#10;
+
+ALU_ctrl = 4'h9;
+
+#10;
+
+ALU_ctrl = 4'hA;
+
+#10;
+
+ALU_ctrl = 4'hB;
+
+#10;
+
+A = 8'hFFFFFFFF;
+B = 8'hFFFFFFFF;
 
 end
 
