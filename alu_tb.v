@@ -24,6 +24,42 @@ ALU_ctrl = 4'h2;
 
 #10;
 
+ALU_ctrl = 4'h3;
+
+#10;
+
+ALU_ctrl = 4'h4;
+
+#10;
+
+ALU_ctrl = 4'h5;
+
+#10;
+
+ALU_ctrl = 4'h6;
+
+#10;
+
+ALU_ctrl = 4'h7;
+
+#10;
+
+ALU_ctrl = 4'h8;
+
+#10;
+
+ALU_ctrl = 4'h9;
+
+#10;
+
+ALU_ctrl = 4'hA;
+
+#10;
+
+ALU_ctrl = 4'hB;
+
+#10;
+
 A = 8'hFFFFFFFF;
 B = 8'hFFFFFFFF;
 
