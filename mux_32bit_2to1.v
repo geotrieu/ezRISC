@@ -5,6 +5,6 @@ module mux_32bit_2to1 #(parameter REG_SIZE=32)(
 	output [REG_SIZE-1:0] out
 );
 
-assign out = sel ? a : b;
+assign out = sel ? b : a;
 
 endmodule

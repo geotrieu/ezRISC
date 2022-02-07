@@ -1,11 +1,11 @@
-module datapath(gpr_in, gpr_out, hi_in, hi_out, lo_in, lo_out, pc_in, pc_out, ir_in, z_in,
+module datapath(clk, reset_n, gpr_in, gpr_out, hi_in, hi_out, lo_in, lo_out, pc_in, pc_out, ir_in, z_in,
 	z_high_out, z_low_out, y_in, mar_in, mdr_in, mdr_out, read, m_data_in,
 	bus_data);
 
 parameter REG_SIZE = 32;
 
-wire clk;
-wire reset_n;
+input clk;
+input reset_n;
 
 input [15:0] gpr_in; // the load enable for the gen. purpose registers
 input [15:0] gpr_out; // control signals to the output multiplexer to select data out
@@ -18,8 +18,6 @@ input pc_in;
 input pc_out;
 input ir_in;
 input z_in;
-wire z_high_in;
-wire z_low_in;
 input z_high_out;
 input z_low_out;
 input y_in;
@@ -48,12 +46,16 @@ wire [REG_SIZE-1:0] r15_data_out;
 wire [REG_SIZE-1:0] pc_data_out;
 wire [REG_SIZE-1:0] ir_data_out;
 wire [REG_SIZE-1:0] y_data_out;
-wire [REG_SIZE-1:0] z_data_out;
-wire [REG_SIZE-1:0] z_low_data_out;
-wire [REG_SIZE-1:0] z_high_data_out;
+wire [63:0] z_data_in;
+wire [63:0] z_data_out;
 wire [REG_SIZE-1:0] mar_data_out;
 wire [REG_SIZE-1:0] hi_data_out;
 wire [REG_SIZE-1:0] lo_data_out;
+
+wire [REG_SIZE-1:0] z_low_data_out;
+wire [REG_SIZE-1:0] z_hi_data_out;
+assign z_low_data_out = z_data_out[31:0];
+assign z_hi_data_out = z_data_out[63:32];
 
 output [REG_SIZE-1:0] bus_data;
 
@@ -77,11 +79,8 @@ assign mar_le = 0;
 assign hi_le = 0;
 assign lo_le = 0;
 assign mdr_in = 0;*/
-assign z_high_in = 0;
-assign z_low_in = 0;
-assign md_mux_select = 0;
-assign clk = 0;
-assign reset_n = 1;
+//assign clk = 0;
+//assign reset_n = 1;
 /*generate
 	for (i = REG_SIZE - 1; i >= 0; i = i - 1)
 	begin: m_data_in_init_loop
@@ -109,14 +108,12 @@ gp_register r15(clk, reset_n, gpr_in[15], bus_data, r15_data_out);
 gp_register pc(clk, reset_n, pc_in, bus_data, pc_data_out);
 gp_register ir(clk, reset_n, ir_in, bus_data, ir_data_out);
 gp_register y(clk, reset_n, y_in, bus_data, y_data_out);
-gp_register z(clk, reset_n, z_in, bus_data, z_data_out);
-gp_register z_high(clk, reset_n, z_high_in, bus_data, z_high_data_out);
-gp_register z_low(clk, reset_n, z_low_in, bus_data, z_low_data_out);
+gp_register #(.GP_REG_SIZE(64)) z(clk, reset_n, z_in, z_data_in, z_data_out);
 gp_register mar(clk, reset_n, mar_in, bus_data, mar_data_out);
 gp_register hi(clk, reset_n, hi_in, bus_data, hi_data_out);
 gp_register lo(clk, reset_n, lo_in, bus_data, lo_data_out);
 
-mdr mdr_reg(clk, reset_n, mdr_in, md_mux_select, bus_data, m_data_in, mdr_output);
+mdr mdr_reg(clk, reset_n, mdr_in, read, bus_data, m_data_in, mdr_output);
 
 /* bus_data multiplexer and control */
 wire [4:0] bus_mux_ctrl;
@@ -144,7 +141,7 @@ mux_32bit_32to1 bus_mux(
 	.r15(r15_data_out),
 	.r16(hi_data_out),
 	.r17(lo_data_out),
-	.r18(z_high_data_out),
+	.r18(z_hi_data_out),
 	.r19(z_low_data_out),
 	.r20(pc_data_out),
 	.r21(mdr_output),
@@ -152,6 +149,6 @@ mux_32bit_32to1 bus_mux(
 	.out(bus_data));
 	
 /* ALU Logic */
-alu the_alu(4'b0000, y_data_out, bus_data, z_data_out);
+alu the_alu(4'b0000, y_data_out, bus_data, z_data_in);
 
 endmodule

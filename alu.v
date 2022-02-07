@@ -5,7 +5,7 @@ parameter REG_SIZE = 32;
 input [3:0] ctrl_sig;
 input [REG_SIZE-1:0] y_data_in;
 input [REG_SIZE-1:0] bus_data_in;
-output reg [REG_SIZE-1:0] z_data_out;
+output reg [63:0] z_data_out;
 
 // and 0000
 // or  0001
