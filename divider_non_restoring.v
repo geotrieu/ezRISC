@@ -17,7 +17,7 @@ begin
 	A = {32'b0, Dividend};
 	M = {1'b0, Divisor, 31'b0};
 	i = 0;
-	while (M >= Divisor) begin
+	while (M >= Divisor && M != 0) begin
 		i = i + 1;
 		intermediate = A - M;
 		Q = Q << 1;
