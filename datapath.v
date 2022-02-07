@@ -36,13 +36,13 @@ input [3:0] alu_op; // Refer to alu.v for operation codes
 output [REG_SIZE-1:0] bus_data;
 
 /* SPECIAL Z REGISTER (64-bit) */
-wire [63:0] z_data_in; // D input for Z Register
-wire [63:0] z_data; // Q output for Z Register
+wire [REG_SIZE + REG_SIZE - 1:0] z_data_in; // D input for Z Register
+wire [REG_SIZE + REG_SIZE - 1:0] z_data; // Q output for Z Register
 wire [REG_SIZE-1:0] z_low_data; // Lower 32 bits of Z Register
-assign z_low_data = z_data[31:0];
+assign z_low_data = z_data[REG_SIZE - 1:0];
 wire [REG_SIZE-1:0] z_hi_data; // Higher 32 bits of Z Register
-assign z_hi_data = z_data[63:32];
-gp_register #(.GP_REG_SIZE(64)) z(clk, reset_n, z_in, z_data_in, z_data); // Instantiation with 64-bit
+assign z_hi_data = z_data[REG_SIZE + REG_SIZE - 1:REG_SIZE];
+gp_register #(.GP_REG_SIZE(REG_SIZE + REG_SIZE)) z(clk, reset_n, z_in, z_data_in, z_data); // Instantiation with 64-bit
 
 /* MDR REGISTER */
 wire [REG_SIZE-1:0] mdr_data; // Q output of MDR register
