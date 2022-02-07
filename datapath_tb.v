@@ -21,7 +21,7 @@ assign gpr_out = {1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0, 1'b0,
 	1'b0, 1'b0, 1'b0, r4_out, 1'b0, r2_out, 1'b0, 1'b0};
 
 wire [3:0] alu_op;
-assign alu_op = 4'b0001; // AND Operation
+assign alu_op = 4'b0000; // AND Operation
 
 wire [31:0] bus_data;
 
