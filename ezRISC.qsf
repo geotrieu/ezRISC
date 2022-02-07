@@ -64,7 +64,6 @@ set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "500 ns" -section_id alu_
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME alu_tb -section_id alu_tb
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
-set_global_assignment -name VERILOG_FILE ezRISC.v
 set_global_assignment -name VERILOG_FILE mux_32bit_32to1.v
 set_global_assignment -name VERILOG_FILE enc_32to5.v
 set_global_assignment -name VERILOG_FILE datapath_tb.v
