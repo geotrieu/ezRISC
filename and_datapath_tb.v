@@ -40,6 +40,8 @@ datapath the_datapath(
 	.z_in(z_in),
 	.z_high_out(1'b0),
 	.z_low_out(z_low_out),
+	.inport_out(1'b0),
+	.c_out(1'b0),
 	.y_in(y_in),
 	.mar_in(mar_in),
 	.mdr_in(mdr_in),
@@ -126,9 +128,9 @@ begin
 			#10 mdr_out <= 1; r5_in <= 1;
          #15 mdr_out <= 0; r5_in <= 0;  // initialize R5 with the value $26
 		end
-		T0: begin  // see if you need to de-assert these signals 
-			#10 pc_out <= 1; mar_in <= 1; inc_pc <= 1;
-			#15 pc_out <= 0; mar_in <= 0; inc_pc <= 0;
+		T0: begin
+			#10 pc_out <= 1; mar_in <= 1; inc_pc <= 1; z_in <= 1;
+			#15 pc_out <= 0; mar_in <= 0; inc_pc <= 0; z_in <= 0;
 		end
 		T1: begin 
 			#10 read <= 1; mdr_in <= 1; m_data_in <= 32'h4A920000;       // opcode for “and R5, R2, R4”

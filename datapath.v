@@ -1,5 +1,5 @@
 module datapath(clk, reset_n, gpr_in, gpr_out, hi_in, hi_out, lo_in, lo_out, pc_in, pc_out, ir_in, z_in,
-	z_high_out, z_low_out, y_in, mar_in, mdr_in, mdr_out, read, m_data_in, alu_op,
+	z_high_out, z_low_out, inport_out, c_out, y_in, mar_in, mdr_in, mdr_out, read, m_data_in, alu_op,
 	bus_data);
 
 parameter REG_SIZE = 32;
@@ -24,6 +24,10 @@ input lo_out;
 input pc_out;
 input z_high_out;
 input z_low_out;
+// I/O Inputs
+input inport_out;
+// Constant Inputs
+input c_out;
 // MDR Inputs
 input mdr_in; // Load Enable for special MDR register
 input mdr_out; // Control Signal for BUS MUX to allow MDR --> bus_data
@@ -34,6 +38,14 @@ input [3:0] alu_op; // Refer to alu.v for operation codes
 
 /* OUTPUTS */
 output [REG_SIZE-1:0] bus_data;
+
+/* I/O Devices */
+wire [REG_SIZE-1:0] inport_data;
+assign inport_data = 32'h00000000; // No actual input port at this moment
+
+/* CONSTANTS */
+wire [REG_SIZE-1:0] c_sign_extended;
+assign c_sign_extended = 32'h00000000; // No actual constant sign extension is implemented yet.
 
 /* SPECIAL Z REGISTER (64-bit) */
 wire [REG_SIZE + REG_SIZE - 1:0] z_data_in; // D input for Z Register
@@ -128,6 +140,8 @@ enc_32to5 bus_out_enc(
 	.r19(z_low_out),
 	.r20(pc_out),
 	.r21(mdr_out),
+	.r22(inport_out),
+	.r23(c_out),
 	.out(bus_mux_ctrl));
 mux_32bit_32to1 bus_mux(
 	.r0(r0_data),
@@ -152,6 +166,8 @@ mux_32bit_32to1 bus_mux(
 	.r19(z_low_data),
 	.r20(pc_data),
 	.r21(mdr_data),
+	.r22(inport_data),
+	.r23(c_sign_extended),
 	.sel(bus_mux_ctrl),
 	.out(bus_data));
 	
