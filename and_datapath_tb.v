@@ -98,6 +98,7 @@ begin
 			r2_in <= 0;
 			r4_in <= 0;
 			m_data_in <= 32'h00000000;
+			alu_op <= 4'b0000;
 			reset_n <= 0;
 			#10 reset_n <= 1;
 		end
