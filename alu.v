@@ -55,9 +55,9 @@ begin
 		c_data_out <= div_data_out;
 		
 	else if (ctrl_sig == 4'b1010)	// neg
-		c_data_out <= (~a_data_in) + 1'b1;	
+		c_data_out <= (~b_data_in) + 1'b1;	
 	
 	else if (ctrl_sig == 4'b1011) // not
-		c_data_out <= (~a_data_in);	
+		c_data_out <= (~b_data_in);	
 	end
 endmodule
