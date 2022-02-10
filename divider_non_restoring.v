@@ -1,4 +1,4 @@
-module divider_non_restoring(Quotient, Dividend, Divisor);
+module divider_non_restoring(Z_Out, Dividend, Divisor);
 parameter REG_SIZE = 32;
 
 input [REG_SIZE-1:0] Dividend;
@@ -8,8 +8,8 @@ reg [REG_SIZE + REG_SIZE - 1:0] A;
 reg [REG_SIZE + REG_SIZE - 1:0] M;
 reg [REG_SIZE + REG_SIZE - 1:0] intermediate;
 reg [REG_SIZE-1:0] Q;
-output [REG_SIZE-1:0] Quotient;
-
+output [REG_SIZE+REG_SIZE-1:0] Z_Out;
+	
 integer i;
 always @(*)
 begin
@@ -31,6 +31,6 @@ begin
 		
 	end
 end
-assign Quotient = Q; 
+assign Z_Out = {A[31:0], Q}; 
 endmodule	
 	

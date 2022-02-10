@@ -5,7 +5,7 @@ module alu_tb;
 reg[31:0] A,B;
 reg[3:0] ALU_ctrl;
 
-wire[31:0] result;
+wire[63:0] result;
 
 alu test_unit(ALU_ctrl, A, B, result);
 
