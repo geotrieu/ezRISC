@@ -1,6 +1,6 @@
-// and datapath_tb.v file
+// or datapath_tb.v file
 `timescale 1ns/10ps
-module and_datapath_tb;
+module or_datapath_tb;
 
 reg pc_out, z_low_out, mdr_out, r2_out, r4_out;           // add any other signals to see in your simulation 
 reg mar_in, z_in, pc_in, mdr_in, ir_in, y_in;
@@ -122,13 +122,13 @@ begin
          #15 mdr_out <= 0; r4_in <= 0;  // initialize R4 with the value $24
 		end
 		Reg_load3a: begin   
-			m_data_in <= 32'h00000026;
+			m_data_in <= 32'h000000FF;
 			#10 read <= 1; mdr_in <= 1;
 			#15 read <= 0; mdr_in <= 0;
 		end
       Reg_load3b: begin
 			#10 mdr_out <= 1; r5_in <= 1;
-         #15 mdr_out <= 0; r5_in <= 0;  // initialize R5 with the value $26
+         #15 mdr_out <= 0; r5_in <= 0;  // initialize R5 with the value $FF
 		end
 		T0: begin
 			#10 pc_out <= 1; mar_in <= 1; inc_pc <= 1; z_in <= 1; alu_op <= Add;
@@ -147,7 +147,7 @@ begin
 			#15 r2_out <= 0; y_in <= 0;
 		end
 		T4: begin
-			#10 r4_out <= 1; alu_op <= And; z_in <= 1;
+			#10 r4_out <= 1; alu_op <= Or; z_in <= 1;
 			#15 r4_out <= 0; z_in <= 0;
 		end
 		T5: begin
