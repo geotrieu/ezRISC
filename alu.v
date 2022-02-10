@@ -7,7 +7,7 @@ input [REG_SIZE-1:0] a_data_in;
 input [REG_SIZE-1:0] b_data_in;
 output reg [REG_SIZE + REG_SIZE -1:0] c_data_out;
 wire [REG_SIZE + REG_SIZE - 1:0] booth_data_out;
-wire [REG_SIZE - 1:0] div_data_out;
+wire [REG_SIZE + REG_SIZE - 1:0] div_data_out;
 booth_32x32_mult b_mult(booth_data_out, a_data_in, b_data_in);
 divider_non_restoring divider(div_data_out, a_data_in, b_data_in);
 // and 0000
