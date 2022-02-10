@@ -135,7 +135,7 @@ begin
 			#15 pc_out <= 0; mar_in <= 0; inc_pc <= 0; z_in <= 0;
 		end
 		T1: begin 
-			#10 z_low_out <= 1; pc_in <= 1; read <= 1; mdr_in <= 1; m_data_in <= 32'h4A920000; // opcode for â€œand R5, R2, R4â€
+			#10 z_low_out <= 1; pc_in <= 1; read <= 1; mdr_in <= 1; m_data_in <= 32'h52920000; // opcode for or R5, R2, R4
 			#15 z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
 		end
 		T2: begin
