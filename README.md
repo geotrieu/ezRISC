@@ -46,3 +46,8 @@ The datapath architecture is based off of a 1-BUS design.
 	- 64-bit Register
 	- Stores the result of the arithmetic operation
 	- Can output upper or lower 32-bits onto the bus
+	
+### ALU Architecture
+
+The ALU is made up of different modular operations, that is selected using a 16-1 MUX.
+![ALU Architecture Design](./documentation/alu_architecture.png)
