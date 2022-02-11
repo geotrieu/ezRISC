@@ -43,10 +43,10 @@ begin
 		c_data_out <= (a_data_in << b_data_in);
 	
 	else if (ctrl_sig == 4'b0110) // ror
-		c_data_out <= (a_data_in >> b_data_in[4:0] | a_data_in << (32 - b_data_in[4:0]));
+		c_data_out [31:0] <= (a_data_in >> b_data_in[4:0] | a_data_in << (32 - b_data_in[4:0]));
 	
 	else if (ctrl_sig == 4'b0111) // rol
-		c_data_out <= (a_data_in << b_data_in[4:0] | a_data_in >> (32 - b_data_in[4:0]));
+		c_data_out [31:0] <= (a_data_in << b_data_in[4:0] | a_data_in >> (32 - b_data_in[4:0]));
 		
 	else if (ctrl_sig == 4'b1000) // mul
 		c_data_out <= booth_data_out;
