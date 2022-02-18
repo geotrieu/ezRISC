@@ -36,7 +36,7 @@ The datapath architecture is based off of a 1-BUS design.
 - Y_MUX/Y: Y Multiplexer/Y Register
 	- Y_MUX
 		- 32-bit 2-1 Multiplexer
-		- If used to increment PC, select constant **0x4**
+		- If used to increment PC, select constant **0x1**
 	- Y Register
 		- 32-bit Register
 		- Stores one of the operands used in ALU calculations
