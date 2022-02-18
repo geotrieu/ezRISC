@@ -198,11 +198,11 @@ mux_32bit_32to1 bus_mux(
 	
 /* ALU LOGIC */
 wire [REG_SIZE - 1:0] alu_a_in_data;
-// This MUX is used to select between the Y data, and the constant 4.
-// This is used for incrementing the PC by 1 word (4 bytes).
+// This MUX is used to select between the Y data, and the constant 1.
+// This is used for incrementing the PC by 1 word.
 mux_32bit_2to1 alu_a_mux(
 	.a(y_data),
-	.b(32'h00000004),
+	.b(32'h00000001),
 	.sel(inc_pc),
 	.out(alu_a_in_data));
 alu the_alu(
