@@ -13,8 +13,8 @@ reg [3:0] alu_op;
 parameter And = 4'b0000, Or = 4'b0001, Add = 4'b0010, Sub = 4'b0011, Shr = 4'b0100, Shl = 4'b0101,
 	Ror = 4'b0110, Rol = 4'b0111, Mul = 4'b1000, Div = 4'b1001, Neg = 4'b1010, Not = 4'b1011;
 
-parameter 	Default = 4'b0000, T0 = 4'b0111, T1 = 4'b1000, T2 = 4'b1001, T3 = 4'b1010, T4 = 4'b1011, T5 = 4'b1100, 
-				T6 = 4'b1101, T7 = 4'b1110;
+parameter 	Default = 4'b0000, T0 = 4'b0001, T1 = 4'b0010, T2 = 4'b0011, T3 = 4'b0100, T4 = 4'b0101, T5 = 4'b0110, 
+				T6 = 4'b0111, T7 = 4'b1000;
 reg [3:0] Present_state = Default;
 
 wire [31:0] bus_data;
@@ -103,6 +103,7 @@ begin
 			ba_out 		<= 	0;
 			outport_in	<= 	0;
 			write			<= 	0;
+			c_out			<= 	0;
 			reset_n <= 0;
 			#10 reset_n <= 1;
 		end
@@ -119,8 +120,8 @@ begin
 			#15 mdr_out <= 0; ir_in <= 0;
 		end
 		T3: begin
-			#10 grb <= 1; ba_out <= 1; outport_in <= 1;
-			#15 grb <= 0; ba_out <= 0; outport_in <= 0;
+			#10 grb <= 1; ba_out <= 1; y_in <= 1;
+			#15 grb <= 0; ba_out <= 0; y_in <= 0;
 		end
 		T4: begin
 			#10 c_out <= 1; alu_op <= Add; z_in <= 1;
