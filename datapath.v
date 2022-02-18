@@ -1,5 +1,5 @@
 module datapath(clk, reset_n, gpr_in, gpr_out, hi_in, hi_out, lo_in, lo_out, pc_in, pc_out, ir_in, z_in,
-	z_high_out, z_low_out, inport_out, c_out, y_in, mar_in, mdr_in, mdr_out, read, m_data_in, alu_op, inc_pc,
+	z_high_out, z_low_out, inport_out, c_out, y_in, mar_in, mdr_in, mdr_out, read, write, alu_op, inc_pc,
 	bus_data);
 
 parameter REG_SIZE = 32;
@@ -32,7 +32,7 @@ input c_out;
 input mdr_in; // Load Enable for special MDR register
 input mdr_out; // Control Signal for BUS MUX to allow MDR --> bus_data
 input read; // Control Signal to choose between bus_data (0) and m_data_in (1) to be inputted into the MDR
-input [REG_SIZE-1:0] m_data_in; // Memory from RAM
+input write; // Control Signal to instruct RAM to write data to address in MAR HIenable
 // ALU Inputs
 input [3:0] alu_op; // Refer to alu.v for operation codes
 input inc_pc;
@@ -59,6 +59,7 @@ gp_register #(.GP_REG_SIZE(REG_SIZE + REG_SIZE)) z(clk, reset_n, z_in, z_data_in
 
 /* MDR REGISTER */
 wire [REG_SIZE-1:0] mdr_data; // Q output of MDR register
+wire [REG_SIZE-1:0] m_data_in; // Memory from RAM
 mdr mdr_reg(
 	.clk(clk),
 	.reset_n(reset_n),
@@ -186,5 +187,14 @@ alu the_alu(
 	.a_data_in(alu_a_in_data),
 	.b_data_in(bus_data),
 	.c_data_out(z_data_in));
+
+/* Memory Logic */
+
+RAM the_ram(
+	.address(mar_data),
+	.clock(clk),
+	.data(mdr_data),
+	.wren(write),
+	.q(m_data_in));
 
 endmodule
