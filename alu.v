@@ -25,16 +25,16 @@ divider_non_restoring divider(div_data_out, a_data_in, b_data_in);
 always @(*)
 begin
 	if (ctrl_sig == 4'b0000) // and
-		c_data_out <= (a_data_in & b_data_in);
+		c_data_out <= {32'b0, (a_data_in & b_data_in)};
 	
 	else if (ctrl_sig == 4'b0001) // or
-		c_data_out <= (a_data_in | b_data_in);	
+		c_data_out <= {32'b0, (a_data_in | b_data_in)};	
 	
 	else if (ctrl_sig == 4'b0010) // add
-		c_data_out <= (a_data_in + b_data_in);
+		c_data_out <= $signed(a_data_in + b_data_in);
 	
 	else if (ctrl_sig == 4'b0011) // sub
-		c_data_out <= (a_data_in - b_data_in);
+		c_data_out <= $signed(a_data_in - b_data_in)};
 	
 	else if (ctrl_sig == 4'b0100) // shr
 		c_data_out <= (a_data_in >> b_data_in);
