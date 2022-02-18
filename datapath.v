@@ -1,6 +1,6 @@
 module datapath(clk, reset_n, gra, grb, grc, r_in, r_out, ba_out, hi_in, hi_out, lo_in, lo_out, pc_in, pc_out, ir_in, z_in,
-	z_high_out, z_low_out, inport_out, c_out, y_in, mar_in, mdr_in, mdr_out, read, write, alu_op, inc_pc,
-	bus_data);
+	z_high_out, z_low_out, inport_out, inport_ext_input, c_out, y_in, mar_in, outport_in, mdr_in, mdr_out, read, write, alu_op, inc_pc,
+	bus_data, outport_ext_output);
 
 parameter REG_SIZE = 32;
 
@@ -16,6 +16,7 @@ input ir_in;
 input z_in;
 input y_in;
 input mar_in;
+input outport_in;
 // MUX Control Signal Inputs
 input hi_out;
 input lo_out;
@@ -31,6 +32,7 @@ input r_out;
 input ba_out;
 // I/O Inputs
 input inport_out;
+input [REG_SIZE - 1:0] inport_ext_input;
 // Constant Inputs
 input c_out;
 // MDR Inputs
@@ -44,10 +46,12 @@ input inc_pc;
 
 /* OUTPUTS */
 output [REG_SIZE-1:0] bus_data;
+output [REG_SIZE-1:0] outport_ext_output;
 
 /* I/O Devices */
 wire [REG_SIZE-1:0] inport_data;
-assign inport_data = 32'h00000000; // No actual input port at this moment
+gp_register inport(clk, reset_n, 1'b1, inport_ext_input, inport_data);
+gp_register outport(clk, reset_n, outport_in, bus_data, outport_ext_output);
 
 /* CONSTANTS */
 wire [REG_SIZE-1:0] c_sign_extended;
@@ -198,11 +202,11 @@ mux_32bit_32to1 bus_mux(
 	
 /* ALU LOGIC */
 wire [REG_SIZE - 1:0] alu_a_in_data;
-// This MUX is used to select between the Y data, and the constant 4.
-// This is used for incrementing the PC by 1 word (4 bytes).
+// This MUX is used to select between the Y data, and the constant 1.
+// This is used for incrementing the PC by 1 word.
 mux_32bit_2to1 alu_a_mux(
 	.a(y_data),
-	.b(32'h00000004),
+	.b(32'h00000001),
 	.sel(inc_pc),
 	.out(alu_a_in_data));
 alu the_alu(
