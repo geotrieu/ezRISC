@@ -1,4 +1,4 @@
-module datapath(clk, reset_n, gpr_in, gpr_out, hi_in, hi_out, lo_in, lo_out, pc_in, pc_out, ir_in, z_in,
+module datapath(clk, reset_n, gra, grb, grc, r_in, r_out, ba_out, hi_in, hi_out, lo_in, lo_out, pc_in, pc_out, ir_in, z_in,
 	z_high_out, z_low_out, inport_out, c_out, y_in, mar_in, mdr_in, mdr_out, read, write, alu_op, inc_pc,
 	bus_data);
 
@@ -9,7 +9,6 @@ parameter REG_SIZE = 32;
 input clk;
 input reset_n;
 // Load Enable Inputs
-input [15:0] gpr_in; // the load enable for the gen. purpose registers
 input hi_in;
 input lo_in;
 input pc_in;
@@ -18,12 +17,18 @@ input z_in;
 input y_in;
 input mar_in;
 // MUX Control Signal Inputs
-input [15:0] gpr_out; // control signals to the output multiplexer to select data out
 input hi_out;
 input lo_out;
 input pc_out;
 input z_high_out;
 input z_low_out;
+// GPR Control Signal Inputs
+input gra;
+input grb;
+input grc;
+input r_in;
+input r_out;
+input ba_out;
 // I/O Inputs
 input inport_out;
 // Constant Inputs
@@ -46,7 +51,6 @@ assign inport_data = 32'h00000000; // No actual input port at this moment
 
 /* CONSTANTS */
 wire [REG_SIZE-1:0] c_sign_extended;
-assign c_sign_extended = 32'h00000000; // No actual constant sign extension is implemented yet.
 
 /* SPECIAL Z REGISTER (64-bit) */
 wire [REG_SIZE + REG_SIZE - 1:0] z_data_in; // D input for Z Register
@@ -70,6 +74,9 @@ mdr mdr_reg(
 	.mdr_output(mdr_data));
 
 /* GP REGISTERS */
+// Control Signals
+wire [15:0] gpr_in;
+wire [15:0] gpr_out;
 // Q outputs of GP Registers
 wire [REG_SIZE-1:0] r0_data;
 wire [REG_SIZE-1:0] r1_data;
@@ -93,6 +100,9 @@ wire [REG_SIZE-1:0] y_data;
 wire [REG_SIZE-1:0] mar_data;
 wire [REG_SIZE-1:0] hi_data;
 wire [REG_SIZE-1:0] lo_data;
+// SPECIAL R0 Register Logic
+wire [REG_SIZE-1:0] r0_bus_data; // the actual data going into the BUS MUX for R0
+assign r0_bus_data = r0_data & {REG_SIZE{~ba_out}};
 // Register Logic Instantiation
 gp_register r0(clk, reset_n, gpr_in[0], bus_data, r0_data);
 gp_register r1(clk, reset_n, gpr_in[1], bus_data, r1_data);
@@ -116,6 +126,19 @@ gp_register y(clk, reset_n, y_in, bus_data, y_data);
 gp_register mar(clk, reset_n, mar_in, bus_data, mar_data);
 gp_register hi(clk, reset_n, hi_in, bus_data, hi_data);
 gp_register lo(clk, reset_n, lo_in, bus_data, lo_data);
+
+/* Select and Encode Logic */
+select_encode gpr_select_encode(
+	.ir(ir_data),
+	.gra(gra),
+	.grb(grb),
+	.grc(grc),
+	.r_in(r_in),
+	.r_out(r_out),
+	.ba_out(ba_out),
+	.gpr_in(gpr_in),
+	.gpr_out(gpr_out),
+	.c_se(c_sign_extended));
 
 /* bus_data MUX & CTRL */
 wire [4:0] bus_mux_ctrl;
@@ -146,7 +169,7 @@ enc_32to5 bus_out_enc(
 	.r23(c_out),
 	.out(bus_mux_ctrl));
 mux_32bit_32to1 bus_mux(
-	.r0(r0_data),
+	.r0(r0_bus_data),
 	.r1(r1_data),
 	.r2(r2_data),
 	.r3(r3_data),
