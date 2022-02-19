@@ -1,13 +1,12 @@
-// ld datapath_tb.v file: <This is the filename> 
+// ld datapath_tb.v file:
 `timescale 1ns/10ps
 module ld_datapath_tb;
 
-reg pc_out, z_low_out, mdr_out, r2_out, r4_out;           // add any other signals to see in your simulation 
+reg pc_out, z_low_out, mdr_out; 
 reg mar_in, z_in, pc_in, mdr_in, ir_in, y_in, c_out;
-reg inc_pc, read, write, r5_in, r2_in, r4_in;
+reg inc_pc, read, write;
 reg gra, grb, grc, r_in, r_out, ba_out, outport_in;
 reg clk, reset_n;
-reg [31:0] m_data_in;
 reg [3:0] alu_op;
 
 parameter And = 4'b0000, Or = 4'b0001, Add = 4'b0010, Sub = 4'b0011, Shr = 4'b0100, Shl = 4'b0101,
@@ -82,8 +81,6 @@ begin
 			pc_out 		<= 	0;
 			z_low_out 	<= 	0;
 			mdr_out 		<= 	0;
-			r2_out 		<= 	0;
-			r4_out 		<= 	0;
 			mar_in 		<= 	0;
 			z_in 			<= 	0;   
 			pc_in 		<=		0;
@@ -92,9 +89,6 @@ begin
 			y_in 			<= 	0;   
 			inc_pc 		<=		0;
 			read 			<= 	0;
-			r5_in 		<= 	0;
-			r2_in 		<= 	0;
-			r4_in 		<= 	0;
 			alu_op 		<= 	4'b0000;
 			gra 			<= 	0;
 			grb 			<= 	0;
