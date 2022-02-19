@@ -34,7 +34,7 @@
 
 
 // synopsys translate_off
-`timescale 1 ps / 1 ps
+`timescale 1ns/10ps
 // synopsys translate_on
 module RAM (
 	address,

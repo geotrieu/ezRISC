@@ -57,7 +57,7 @@ datapath the_datapath(
 initial
 begin
 	clk = 0;
-	forever #10 clk = ~clk;
+	forever #5 clk = ~clk;
 end
 
 always @(posedge clk)  // finite state machine; if clock rising-edge
