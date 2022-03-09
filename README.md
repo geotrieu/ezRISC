@@ -51,3 +51,11 @@ The datapath architecture is based off of a 1-BUS design.
 
 The ALU is made up of different modular operations, that is selected using a 16-1 MUX.
 ![ALU Architecture Design](./documentation/alu_architecture.png)
+
+### Select and Encode Logic
+![Select and Encode Design](./documentation/select_and_encode.png)
+- Special Note: When the purple logic expression on the left is true:
+	- jal OP Code is 10100
+	- This means this is a 'jal' (jump and link) instruction
+	- It also means in this cycle, the current PC is pushed into the link register (R15)
+	- Forces the decoder to activate the link register (R15) lines.
