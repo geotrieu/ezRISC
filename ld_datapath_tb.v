@@ -70,12 +70,12 @@ begin
 		T4: 			#40 Present_state = T5;
 		T5: 			#40 Present_state = T6;
 		T6: 			#40 Present_state = T7;
-		T7:			#40 Present_state = T0;
+		T7: 			#40 Present_state = T0;
    endcase
 end
 
-//PC OP CODE (ld R1, $85): 0x10842800
-//PC OP CODE (ld R0, $35(R1)): 0x1009A800
+//PC OP CODE (ld R1, $85): 0x00800085
+//PC OP CODE (ld R0, $35(R1)): 0x00080035
                                           
 always @(Present_state)  // do the required job in each state
 begin
