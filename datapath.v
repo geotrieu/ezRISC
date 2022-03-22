@@ -1,6 +1,7 @@
 module datapath(clk, reset_n, gra, grb, grc, r_in, r_out, ba_out, hi_in, hi_out, lo_in, lo_out, pc_in, pc_out, ir_in, z_in,
-	z_high_out, z_low_out, inport_out, inport_ext_input, c_out, y_in, mar_in, outport_in, mdr_in, mdr_out, read, write, alu_op, inc_pc,
-	bus_data, outport_ext_output);
+	z_high_out, z_low_out, inport_out, inport_ext_input, c_out, y_in, mar_in, outport_in, mdr_in, mdr_out, read, write,
+	alu_op, inc_pc, con_in,
+	bus_data, outport_ext_output, con_out);
 
 parameter REG_SIZE = 32;
 
@@ -43,10 +44,13 @@ input write; // Control Signal to instruct RAM to write data to address in MAR H
 // ALU Inputs
 input [3:0] alu_op; // Refer to alu.v for operation codes
 input inc_pc;
+// CON FF Inputs
+input con_in;
 
 /* OUTPUTS */
 output [REG_SIZE-1:0] bus_data;
 output [REG_SIZE-1:0] outport_ext_output;
+output con_out;
 
 /* I/O Devices */
 wire [REG_SIZE-1:0] inport_data;
@@ -130,6 +134,15 @@ gp_register y(clk, reset_n, y_in, bus_data, y_data);
 gp_register mar(clk, reset_n, mar_in, bus_data, mar_data);
 gp_register hi(clk, reset_n, hi_in, bus_data, hi_data);
 gp_register lo(clk, reset_n, lo_in, bus_data, lo_data);
+
+/* CON FF */
+con_ff the_con_ff(
+	.clk(clk),
+	.reset_n(reset_n),
+	.con_in(con_in),
+	.ir(ir_data),
+	.bus_data(bus_data),
+	.con_out(con_out));
 
 /* Select and Encode Logic */
 select_encode gpr_select_encode(
