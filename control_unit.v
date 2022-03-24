@@ -3,45 +3,53 @@ module control_unit (
 
 output reg gra, grb, grc, r_in, r_out, ba_out, hi_in, 
 hi_out, lo_in, lo_out, pc_in, pc_out, ir_in, z_in, 
-z_high_out, z_low_out, inport_out, inport_ext_input,
-c_out, y_in, mar_in, outport_in, mdr_in, mdr_out, read,
-write, alu_op, inc_pc, bus_data, outport_ext_output, 
-clear, run,
+z_high_out, z_low_out, inport_out, c_out, y_in,
+mar_in, outport_in, mdr_in, mdr_out, read, write,
+inc_pc, outport_ext_output, con_in, clear, run,
+output reg [3:0] alu_op,
 input [31:0] ir_data,
 input stop,
-input clk, reset_n, con_ff);
+input clk, reset_n, con_ff, con_out);
+
 
 parameter And = 4'b0000, Or = 4'b0001, Add = 4'b0010, Sub = 4'b0011, Shr = 4'b0100, Shl = 4'b0101,
 	Ror = 4'b0110, Rol = 4'b0111, Mul = 4'b1000, Div = 4'b1001, Neg = 4'b1010, Not = 4'b1011;
 	
-parameter reset_n_state = 7’b0000000, fetch0 = 7’b0000001, fetch1 = 7’b0000010, fetch2 = 7’b0000011,
-ld3  = 7’b0000100, ld4  = 7’b0000101, ld5  = 7’b0000110, ld6  = 7’b0000111, ld7  = 7’b0001000, 
-ld8  = 7’b0001001,
-ldi3 = 7’b0001010, ldi4 = 7’b0001011, ldi5 = 7’b0001100, ldi6 = 7’b0001101,
-st3  = 7’b0001110, st4  = 7’b0001111, st5  = 7’b0010000, st6  = 7’b0010001, st7  = 7’b0010010, 
-st8  = 7’b0010011,
-add3 = 7’b0010100, add4 = 7’b0010101, add5 = 7’b0010110, add6 = 7’b0010111,
-sub3 = 7’b0011000, sub4 = 7’b0011001, sub5 = 7’b0011010, sub6 = 7’b0011011,
-shr3 = 7’b0011100, shr4 = 7’b0011101, shr5 = 7’b0011110, shr6 = 7’b0011111,
-shl3 = 7’b0100000, shl4 = 7’b0100001, shl5 = 7’b0100010, shl6 = 7’b0100011,
-ror3 = 7’b0100100, ror4 = 7’b0100101, ror5 = 7’b0100110, ror6 = 7’b0100111,
-rol3 = 7’b0101000, rol4 = 7’b0101001, rol5 = 7’b0101010, rol6 = 7’b0101011,
-and3 = 7’b0101100, and4 = 7’b0101101, and5 = 7’b0101110, and6 = 7’b0101111,
-or3  = 7’b0110000, or4  = 7’b0110001, or5  = 7’b0110010, or6  = 7’b0110011,
-andi3 = 7’b0110100, andi4 = 7’b0110101, andi5 = 7’b0110110, andi6 = 7’b0110111,
-ori3 = 7’b0111000, ori4 = 7’b0111001, ori5 = 7’b0111010, ori6 = 7’b0111011,
-mul3 = 7’b0111100, mul4 = 7’b0111101, mul5 = 7’b0111110, mul6 = 7’b0111111, mul7 = 7’b1000000,
-div3 = 7’b1000001, div4 = 7’b1000010, div5 = 7’b1000011, div6 = 7’b1000100, div7 = 7’b1000101,
-neg3 = 7’b1000110, neg4 = 7’b1000111, neg5 = 7’b1001000,
-not3 = 7’b1001001, not4 = 7’b1001010, not5 = 7’b1001011,
-br3  = 7’b1001100, br4  = 7’b1001101, br5  = 7’b1001110, br6  = 7’b1001111, br7  = 7’b1010000,
-jr3  = 7’b1010001, jr4  = 7’b1010010,
-jal3 = 7’b1010011, jal4 = 7’b1010100, jal5 = 7’b1010101,
-in3  = 7’b1010110, in4  = 7’b1010111,
-out3 = 7’b1011000, out4 = 7’b1011001,
-mfhi3 = 7’b1011010, mfhi4 = 7’b1011011,
-mflo3 = 7’b1011100, mflo4 = 7’b1011101
+parameter reset_n_state = 7'b0000000, fetch0 = 7'b0000001, fetch1 = 7'b0000010, fetch2 = 7'b0000011,
+ld3  = 7'b0000100, ld4  = 7'b0000101, ld5  = 7'b0000110, ld6  = 7'b0000111, ld7  = 7'b0001000, 
+ld8  = 7'b0001001,
+ldi3 = 7'b0001010, ldi4 = 7'b0001011, ldi5 = 7'b0001100, ldi6 = 7'b0001101,
+st3  = 7'b0001110, st4  = 7'b0001111, st5  = 7'b0010000, st6  = 7'b0010001, st7  = 7'b0010010, 
+st8  = 7'b0010011,
+add3 = 7'b0010100, add4 = 7'b0010101, add5 = 7'b0010110, add6 = 7'b0010111,
+sub3 = 7'b0011000, sub4 = 7'b0011001, sub5 = 7'b0011010, sub6 = 7'b0011011,
+shr3 = 7'b0011100, shr4 = 7'b0011101, shr5 = 7'b0011110, shr6 = 7'b0011111,
+shl3 = 7'b0100000, shl4 = 7'b0100001, shl5 = 7'b0100010, shl6 = 7'b0100011,
+ror3 = 7'b0100100, ror4 = 7'b0100101, ror5 = 7'b0100110, ror6 = 7'b0100111,
+rol3 = 7'b0101000, rol4 = 7'b0101001, rol5 = 7'b0101010, rol6 = 7'b0101011,
+and3 = 7'b0101100, and4 = 7'b0101101, and5 = 7'b0101110, and6 = 7'b0101111,
+or3  = 7'b0110000, or4  = 7'b0110001, or5  = 7'b0110010, or6  = 7'b0110011,
+andi3 = 7'b0110100, andi4 = 7'b0110101, andi5 = 7'b0110110, andi6 = 7'b0110111,
+ori3 = 7'b0111000, ori4 = 7'b0111001, ori5 = 7'b0111010, ori6 = 7'b0111011,
+mul3 = 7'b0111100, mul4 = 7'b0111101, mul5 = 7'b0111110, mul6 = 7'b0111111, mul7 = 7'b1000000,
+div3 = 7'b1000001, div4 = 7'b1000010, div5 = 7'b1000011, div6 = 7'b1000100, div7 = 7'b1000101,
+neg3 = 7'b1000110, neg4 = 7'b1000111, neg5 = 7'b1001000,
+not3 = 7'b1001001, not4 = 7'b1001010, not5 = 7'b1001011,
+br3  = 7'b1001100, br4  = 7'b1001101, br5  = 7'b1001110, br6  = 7'b1001111, br7  = 7'b1010000,
+jr3  = 7'b1010001, jr4  = 7'b1010010,
+jal3 = 7'b1010011, jal4 = 7'b1010100, jal5 = 7'b1010101,
+in3  = 7'b1010110, in4  = 7'b1010111,
+out3 = 7'b1011000, out4 = 7'b1011001,
+mfhi3 = 7'b1011010, mfhi4 = 7'b1011011,
+mflo3 = 7'b1011100, mflo4 = 7'b1011101;
 halt3 = 7'b1011110;
+////////////////////////////////////////////
+////////////////////////////////////////////
+////////////////////////////////////////////
+// add nop and halt
+////////////////////////////////////////////
+////////////////////////////////////////////
+////////////////////////////////////////////
 
 reg [6:0] Present_state = reset_n_state; 
 
@@ -51,9 +59,9 @@ begin
 		Present_state = halt3;
 end
 
-always @(negedge clk, posedge reset_n) // finite state machine; if clk falling-edge or reset_n rising-edge
+always @(negedge clk, negedge reset_n) // finite state machine; if clk falling-edge or reset_n fall-edge
 begin
-	if (reset_n == 1’b1) Present_state = reset_n_state;
+	if (reset_n == 1'b0) Present_state = reset_n_state;
 	else 
 	begin
 		case (Present_state)
@@ -189,7 +197,7 @@ begin
 			jr4 : Present_state = reset_n_state;
 			
 			jal3 : Present_state = jal4;
-			jal4 : Present_state = jal5
+			jal4 : Present_state = jal5;
 			jal5 : Present_state = reset_n_state;
 			
 			in3 : Present_state = in4;
@@ -234,12 +242,10 @@ begin
 			outport_in	<= 	0;
 			write			<= 	0;
 			c_out			<= 	0;
-			run			<=		1;
-			reset_n <= 0;
-			// reset_n <= 1;
+			run			<=	1;
+
 		end
 		fetch0: begin
-			reset_n <= 1;
 			pc_out <= 1; mar_in <= 1; inc_pc <= 1; z_in <= 1; alu_op <= Add;
 			// pc_out <= 0; mar_in <= 0; inc_pc <= 0; z_in <= 0;
 		end
