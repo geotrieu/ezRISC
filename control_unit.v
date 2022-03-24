@@ -5,10 +5,12 @@ output reg gra, grb, grc, r_in, r_out, ba_out, hi_in,
 hi_out, lo_in, lo_out, pc_in, pc_out, ir_in, z_in, 
 z_high_out, z_low_out, inport_out, c_out, y_in,
 mar_in, outport_in, mdr_in, mdr_out, read, write,
-inc_pc, outport_ext_output, con_in,
+inc_pc, outport_ext_output, con_in, clear, run,
 output reg [3:0] alu_op,
-input [31:0] ir_data, 
+input [31:0] ir_data,
+input stop,
 input clk, reset_n, con_ff, con_out);
+
 
 parameter And = 4'b0000, Or = 4'b0001, Add = 4'b0010, Sub = 4'b0011, Shr = 4'b0100, Shl = 4'b0101,
 	Ror = 4'b0110, Rol = 4'b0111, Mul = 4'b1000, Div = 4'b1001, Neg = 4'b1010, Not = 4'b1011;
@@ -40,6 +42,7 @@ in3  = 7'b1010110, in4  = 7'b1010111,
 out3 = 7'b1011000, out4 = 7'b1011001,
 mfhi3 = 7'b1011010, mfhi4 = 7'b1011011,
 mflo3 = 7'b1011100, mflo4 = 7'b1011101;
+halt3 = 7'b1011110;
 ////////////////////////////////////////////
 ////////////////////////////////////////////
 ////////////////////////////////////////////
@@ -49,6 +52,12 @@ mflo3 = 7'b1011100, mflo4 = 7'b1011101;
 ////////////////////////////////////////////
 
 reg [6:0] Present_state = reset_n_state; 
+
+always @(stop)
+begin
+	if (stop)
+		Present_state = halt3;
+end
 
 always @(negedge clk, negedge reset_n) // finite state machine; if clk falling-edge or reset_n fall-edge
 begin
@@ -61,32 +70,32 @@ begin
 			fetch1 : Present_state = fetch2;
 			fetch2 : begin
 				case (ir_data[31:27]) // inst. decoding based on the opcode to set the next state
-					5'b00000 : Present_state = ld3;
-					5'b00001 : Present_state = ldi3;
-					5'b00010 : Present_state = st3;
-					5'b00011 : Present_state = add3;
-					5'b00100 : Present_state = sub3;
-					5'b00101 : Present_state = shr3;
-					5'b00110 : Present_state = shl3;
-					5'b00111 : Present_state = ror3;
-					5'b01000 : Present_state = rol3;
-					5'b01001 : Present_state = and3;
-					5'b01010 : Present_state = or3;
-					5'b01100 : Present_state = andi3;
-					5'b01101 : Present_state = ori3;
-					5'b01110 : Present_state = mul3;
-					5'b01111 : Present_state = div3;
-					5'b10000 : Present_state = neg3;
-					5'b10001 : Present_state = not3;
-					5'b10010 : Present_state = br3;
-					5'b10011 : Present_state = jr3;
-					5'b10100 : Present_state = jal3;
-					5'b10101 : Present_state = in3;
-					5'b10110 : Present_state = out3;
-					5'b10111 : Present_state = mfhi3;
-					5'b11000 : Present_state = mflo3;
-					//5'b11001 : Present_state = nop3;
-					//5'b11010 : Present_state = halt3;
+					5’b00000 : Present_state = ld3;
+					5’b00001 : Present_state = ldi3;
+					5’b00010 : Present_state = st3;
+					5’b00011 : Present_state = add3;
+					5’b00100 : Present_state = sub3;
+					5’b00101 : Present_state = shr3;
+					5’b00110 : Present_state = shl3;
+					5’b00111 : Present_state = ror3;
+					5’b01000 : Present_state = rol3;
+					5’b01001 : Present_state = and3;
+					5’b01010 : Present_state = or3;
+					5’b01100 : Present_state = andi3;
+					5’b01101 : Present_state = ori3;
+					5’b01110 : Present_state = mul3;
+					5’b01111 : Present_state = div3;
+					5’b10000 : Present_state = neg3;
+					5’b10001 : Present_state = not3;
+					5’b10010 : Present_state = br3;
+					5’b10011 : Present_state = jr3;
+					5’b10100 : Present_state = jal3;
+					5’b10101 : Present_state = in3;
+					5’b10110 : Present_state = out3;
+					5’b10111 : Present_state = mfhi3;
+					5’b11000 : Present_state = mflo3;
+					5’b11001 : Present_state = reset_n_state; //nop does nothing
+					5’b11010 : Present_state = halt3;
 				endcase
 			end
 			ld3 : Present_state = ld4;
@@ -203,13 +212,8 @@ begin
 			mflo3 : Present_state = mflo4;
 			mflo4 : Present_state = reset_n_state;
 			
-			////////////////////////////////////////////
-			////////////////////////////////////////////
-			////////////////////////////////////////////
-			// ADD NOP AND HALT
-			////////////////////////////////////////////
-			////////////////////////////////////////////
-			////////////////////////////////////////////
+			halt3 : Present_state = halt3;
+			
 		endcase
 	end
 end
@@ -238,7 +242,8 @@ begin
 			outport_in	<= 	0;
 			write			<= 	0;
 			c_out			<= 	0;
-			// reset_n <= 1;
+			run			<=	1;
+
 		end
 		fetch0: begin
 			pc_out <= 1; mar_in <= 1; inc_pc <= 1; z_in <= 1; alu_op <= Add;
@@ -638,14 +643,9 @@ begin
 			lo_out <= 1; gra <= 1; r_in <= 1;
 		end
 		///////////////////////////////////////////////////////////////////
-		
-		////////////////////////////////////////////
-		////////////////////////////////////////////
-		////////////////////////////////////////////
-		// ADD NOP AND HALT
-		////////////////////////////////////////////
-		////////////////////////////////////////////
-		//////////////////////////////////////////// 
+		halt3: begin
+			run <= 0;
+		end
 	endcase
 end
 endmodule
