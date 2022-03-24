@@ -7,8 +7,14 @@ parameter REG_SIZE = 32;
 input fast_clk;
 input reset_n;
 
+reg clk2 = 0;
 reg clk = 0;
 always @(posedge fast_clk)
+begin
+clk2 <= ~clk2;
+end
+
+always @(posedge clk2)
 begin
 clk <= ~clk;
 end
@@ -50,6 +56,11 @@ wire [3:0] alu_op; // Refer to alu.v for operation codes
 wire inc_pc;
 // CON FF wires
 wire con_in;
+
+// more wires
+wire clear;
+reg stop = 0;
+wire run;
 
 // bus data wires
 output [REG_SIZE-1:0] bus_data;
@@ -174,7 +185,10 @@ control_unit the_control_unit(
 	.reset_n(reset_n),
 	.con_ff(con_ff),
 	.con_in(con_in),
-	.con_out(con_out));
+	.con_out(con_out),
+	.clear(clear),
+	.run(run),
+	.stop(stop));
 
 
 /* CON FF */
