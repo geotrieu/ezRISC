@@ -8,7 +8,7 @@ c_out, y_in, mar_in, outport_in, mdr_in, mdr_out, read,
 write, alu_op, inc_pc, bus_data, outport_ext_output, 
 Clear,
 input [31:0] ir_data,
-input clk, reset_n, ..., con_ff);
+input clk, reset_n, con_ff);
 
 parameter And = 4'b0000, Or = 4'b0001, Add = 4'b0010, Sub = 4'b0011, Shr = 4'b0100, Shl = 4'b0101,
 	Ror = 4'b0110, Rol = 4'b0111, Mul = 4'b1000, Div = 4'b1001, Neg = 4'b1010, Not = 4'b1011;
@@ -39,7 +39,7 @@ jal3 = 7’b1010011, jal4 = 7’b1010100, jal5 = 7’b1010101,
 in3  = 7’b1010110, in4  = 7’b1010111,
 out3 = 7’b1011000, out4 = 7’b1011001,
 mfhi3 = 7’b1011010, mfhi4 = 7’b1011011,
-mflo3 = 7’b1011100, mflo4 = 7’b1011101,
+mflo3 = 7’b1011100, mflo4 = 7’b1011101;
 ////////////////////////////////////////////
 ////////////////////////////////////////////
 ////////////////////////////////////////////
@@ -47,10 +47,10 @@ mflo3 = 7’b1011100, mflo4 = 7’b1011101,
 ////////////////////////////////////////////
 ////////////////////////////////////////////
 ////////////////////////////////////////////
-;
+
 reg [6:0] Present_state = reset_n_state; 
 
-always @(posedge clk, posedge reset_n) // finite state machine; if clk or reset_n rising-edge
+always @(negedge clk, posedge reset_n) // finite state machine; if clk falling-edge or reset_n rising-edge
 begin
 	if (reset_n == 1’b1) Present_state = reset_n_state;
 	else 
@@ -239,20 +239,415 @@ begin
 			write			<= 	0;
 			c_out			<= 	0;
 			reset_n <= 0;
-			#10 reset_n <= 1;
+			// reset_n <= 1;
 		end
 		fetch0: begin
-			#10 pc_out <= 1; mar_in <= 1; inc_pc <= 1; z_in <= 1; alu_op <= Add;
-			#15 pc_out <= 0; mar_in <= 0; inc_pc <= 0; z_in <= 0;
+			reset_n <= 1;
+			pc_out <= 1; mar_in <= 1; inc_pc <= 1; z_in <= 1; alu_op <= Add;
+			// pc_out <= 0; mar_in <= 0; inc_pc <= 0; z_in <= 0;
 		end
 		fetch1: begin
-			#10 z_low_out <= 1; pc_in <= 1; read <= 1; mdr_in <= 1;
-			#15 z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			pc_out <= 0; mar_in <= 0; inc_pc <= 0; z_in <= 0;
+			z_low_out <= 1; pc_in <= 1; read <= 1; mdr_in <= 1;
+			//z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
 		end
+		///////////////////////////////////////////////////////////////////
 		ld3: begin
-			// whatever goes here. Thinking un assert signals from previous state on each state and assert new signals?
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
 		end
-		⁞
+		ld4: begin
+			mdr_out <= 0; ir_in <= 0;
+			grb <= 1; ba_out <= 1; y_in <= 1;
+		end
+		ld5: begin
+			grb <= 0; ba_out <= 0; y_in <= 0;
+			c_out <= 1; alu_op <= Add; z_in <= 1;
+		end
+		ld6: begin
+			c_out <= 0; z_in <= 0;
+			z_low_out <= 1; mar_in <= 1;
+		end
+		ld7: begin
+			z_low_out <= 0; mar_in <= 0;
+			read <= 1; mdr_in <= 1;
+		end
+		ld8: begin
+			read <= 0; mdr_in <= 0;
+			mdr_out <= 1; gra <= 1; r_in <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		ldi3: begin
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
+			
+		end
+		ldi4: begin
+			mdr_out <= 0; ir_in <= 0;
+			grb <= 1; ba_out <= 1; y_in <= 1;
+			
+		end
+		ldi5: begin
+			grb <= 0; ba_out <= 0; y_in <= 0;
+			c_out <= 1; alu_op <= Add; z_in <= 1;
+		end
+		ldi6: begin
+			c_out <= 0; z_in <= 0;
+			z_low_out <= 1; gra <= 1; r_in <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		st3: begin
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
+		end
+		st4: begin
+			mdr_out <= 0; ir_in <= 0;
+			grb <= 1; ba_out <= 1; y_in <= 1;
+		end
+		st5: begin
+			grb <= 0; ba_out <= 0; y_in <= 0;
+			c_out <= 1; alu_op <= Add; z_in <= 1;
+		end
+		st6: begin
+			c_out <= 0; z_in <= 0;
+			z_low_out <= 1; mar_in <= 1;
+		end
+		st7: begin
+			z_low_out <= 0; mar_in <= 0;
+			gra <= 1; r_out <= 1; mdr_in <= 1;
+		end
+		st8: begin
+			gra <= 0; r_out <= 0; mdr_in <= 0;
+			write <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		add3: begin
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
+		end
+		add4: begin
+			mdr_out <= 0; ir_in <= 0;
+			grb <= 1; r_out <= 1; y_in <= 1;
+		end
+		add5: begin
+			grb <= 0; r_out <= 0; y_in <= 0;
+			grc <= 1; r_out <= 1; alu_op <= Add; z_in <= 1;
+		end
+		add6: begin
+			grc <= 0; r_out <= 0; z_in <= 0;
+			z_low_out <= 1; gra <= 1; r_in <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		sub3: begin
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
+		end
+		sub4: begin
+			mdr_out <= 0; ir_in <= 0;
+			grb <= 1; r_out <= 1; y_in <= 1;
+		end
+		sub5: begin
+			grb <= 0; r_out <= 0; y_in <= 0;
+			grc <= 1; r_out <= 1; alu_op <= Sub; z_in <= 1;
+		end
+		sub6: begin
+			grc <= 0; r_out <= 0; z_in <= 0;
+			z_low_out <= 1; gra <= 1; r_in <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		shr3: begin
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
+		end
+		shr4: begin
+			mdr_out <= 0; ir_in <= 0;
+			grb <= 1; r_out <= 1; y_in <= 1;
+		end
+		shr5: begin
+			grb <= 0; r_out <= 0; y_in <= 0;
+			grc <= 1; r_out <= 1; alu_op <= Shr; z_in <= 1;
+		end
+		shr6: begin
+			grc <= 0; r_out <= 0; z_in <= 0;
+			z_low_out <= 1; gra <= 1; r_in <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		shl3: begin
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
+		end
+		shl4: begin
+			mdr_out <= 0; ir_in <= 0;
+			grb <= 1; r_out <= 1; y_in <= 1;
+		end
+		shl5: begin
+			grb <= 0; r_out <= 0; y_in <= 0;
+			grc <= 1; r_out <= 1; alu_op <= Shl; z_in <= 1;
+		end
+		shl6: begin
+			grc <= 0; r_out <= 0; z_in <= 0;
+			z_low_out <= 1; gra <= 1; r_in <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		ror3: begin
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
+		end
+		ror4: begin
+			mdr_out <= 0; ir_in <= 0;
+			grb <= 1; r_out <= 1; y_in <= 1;
+		end
+		ror5: begin
+			grb <= 0; r_out <= 0; y_in <= 0;
+			grc <= 1; r_out <= 1; alu_op <= Ror; z_in <= 1;
+		end
+		ror6: begin
+			grc <= 0; r_out <= 0; z_in <= 0;
+			z_low_out <= 1; gra <= 1; r_in <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		rol3: begin
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
+		end
+		rol4: begin
+			mdr_out <= 0; ir_in <= 0;
+			grb <= 1; r_out <= 1; y_in <= 1;
+		end
+		rol5: begin
+			grb <= 0; r_out <= 0; y_in <= 0;
+			grc <= 1; r_out <= 1; alu_op <= Rol; z_in <= 1;
+		end
+		rol6: begin
+			grc <= 0; r_out <= 0; z_in <= 0;
+			z_low_out <= 1; gra <= 1; r_in <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		and3: begin
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
+		end
+		and4: begin
+			mdr_out <= 0; ir_in <= 0;
+			grb <= 1; r_out <= 1; y_in <= 1;
+		end
+		and5: begin
+			grb <= 0; r_out <= 0; y_in <= 0;
+			grc <= 1; r_out <= 1; alu_op <= And; z_in <= 1;
+		end
+		and6: begin
+			grc <= 0; r_out <= 0; z_in <= 0;
+			z_low_out <= 1; gra <= 1; r_in <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		or3: begin
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
+		end
+		or4: begin
+			mdr_out <= 0; ir_in <= 0;
+			grb <= 1; r_out <= 1; y_in <= 1;
+		end
+		or5: begin
+			grb <= 0; r_out <= 0; y_in <= 0;
+			grc <= 1; r_out <= 1; alu_op <= Or; z_in <= 1;
+		end
+		or6: begin
+			grc <= 0; r_out <= 0; z_in <= 0;
+			z_low_out <= 1; gra <= 1; r_in <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		andi3: begin
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
+		end
+		andi4: begin
+			mdr_out <= 0; ir_in <= 0;
+			grb <= 1; r_out <= 1; y_in <= 1;
+		end
+		andi5: begin
+			grb <= 0; r_out <= 0; y_in <= 0;
+			c_out <= 1; alu_op <= And; z_in <= 1;
+		end
+		andi6: begin
+			c_out <= 0; z_in <= 0;
+			z_low_out <= 1; gra <= 1; r_in <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		ori3: begin
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
+		end
+		ori4: begin
+			mdr_out <= 0; ir_in <= 0;
+			grb <= 1; r_out <= 1; y_in <= 1;
+		end
+		ori5: begin
+			grb <= 0; r_out <= 0; y_in <= 0;
+			c_out <= 1; alu_op <= Or; z_in <= 1;
+		end
+		ori6: begin
+			c_out <= 0; z_in <= 0;
+			z_low_out <= 1; gra <= 1; r_in <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		mul3: begin
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
+		end
+		mul4: begin
+			mdr_out <= 0; ir_in <= 0;
+			gra <= 1; r_out <= 1; y_in <= 1;
+		end
+		mul5: begin
+			gra <= 0; r_out <= 0; y_in <= 0;
+			grb <= 1; r_out <= 1; alu_op <= Mul; z_in <= 1;
+		end
+		mul6: begin
+			grb <= 0; r_out <= 0; z_in <= 0;
+			z_low_out <= 1; lo_in <= 1;
+		end
+		mul7: begin
+			z_low_out <= 0; lo_in <= 0;
+			z_high_out <= 1; hi_in <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		div3: begin
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
+		end
+		div4: begin
+			mdr_out <= 0; ir_in <= 0;
+			gra <= 1; r_out <= 1; y_in <= 1;
+		end
+		div5: begin
+			gra <= 0; r_out <= 0; y_in <= 0;
+			grb <= 1; r_out <= 1; alu_op <= Div; z_in <= 1;
+		end
+		div6: begin
+		grb <= 0; r_out <= 0; z_in <= 0;
+			z_low_out <= 1; lo_in <= 1;
+		end
+		div7: begin
+			z_low_out <= 0; lo_in <= 0;
+			z_high_out <= 1; hi_in <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		neg3: begin
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
+		end
+		neg4: begin
+			mdr_out <= 0; ir_in <= 0;
+			grb <= 1; r_out <= 1; alu_op <= Neg; z_in <= 1;
+		end
+		neg5: begin
+			grb <= 0; r_out <= 0; z_in <= 0;
+			z_low_out <= 1; gra <= 1; r_in <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		not3: begin
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
+		end
+		not4: begin
+			mdr_out <= 0; ir_in <= 0;
+			grb <= 1; r_out <= 1; alu_op <= Not; z_in <= 1;
+		end
+		not5: begin
+			grb <= 0; r_out <= 0; z_in <= 0;
+			z_low_out <= 1; gra <= 1; r_in <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		br3: begin
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
+		end
+		br4: begin
+			mdr_out <= 0; ir_in <= 0;
+			gra <= 1; r_out <= 1; con_in <= 1;
+		end
+		br5: begin
+			gra <= 0; r_out <= 0; con_in <= 0;
+			pc_out <= 1; y_in <= 1;
+		end
+		br6: begin
+			pc_out <= 0; y_in <= 0;
+			c_out <= 1; alu_op <= Add; z_in <= 1;
+		end
+		br7: begin
+			c_out <= 0; z_in <= 0;
+			z_low_out <= 1;
+			if (con_out == 1'b1)
+				pc_in <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		jr3: begin
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
+		end
+		jr4: begin
+			mdr_out <= 0; ir_in <= 0;
+			gra <= 1; r_out <= 1; pc_in <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		jal3: begin
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
+		end
+		jal4: begin
+			mdr_out <= 0; ir_in <= 0;
+			r_in <= 1; pc_out <= 1;
+		end
+		jal5: begin
+			r_in <= 0; pc_out <= 0;
+			gra <= 1; r_out <= 1; pc_in <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		in3: begin
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
+		end
+		in4: begin
+			mdr_out <= 0; ir_in <= 0;
+			gra <= 1; r_in <= 1; inport_out <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		out3: begin
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
+		end
+		out4: begin
+			mdr_out <= 0; ir_in <= 0;
+			gra <= 1; r_out <= 1; outport_in <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		mfhi3: begin
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
+		end
+		mfhi4: begin
+			mdr_out <= 0; ir_in <= 0;
+			hi_out <= 1; gra <= 1; r_in <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		mflo3: begin
+			z_low_out <= 0; pc_in <= 0; read <= 0; mdr_in <= 0;
+			mdr_out <= 1; ir_in <= 1;
+		end
+		mflo4: begin
+			mdr_out <= 0; ir_in <= 0;
+			lo_out <= 1; gra <= 1; r_in <= 1;
+		end
+		///////////////////////////////////////////////////////////////////
+		
+		////////////////////////////////////////////
+		////////////////////////////////////////////
+		////////////////////////////////////////////
+		// ADD NOP AND HALT
+		////////////////////////////////////////////
+		////////////////////////////////////////////
+		//////////////////////////////////////////// 
 	endcase
 end
 endmodule
