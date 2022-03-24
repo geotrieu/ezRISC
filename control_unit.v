@@ -6,8 +6,9 @@ hi_out, lo_in, lo_out, pc_in, pc_out, ir_in, z_in,
 z_high_out, z_low_out, inport_out, inport_ext_input,
 c_out, y_in, mar_in, outport_in, mdr_in, mdr_out, read,
 write, alu_op, inc_pc, bus_data, outport_ext_output, 
-Clear,
+clear, run,
 input [31:0] ir_data,
+input stop,
 input clk, reset_n, con_ff);
 
 parameter And = 4'b0000, Or = 4'b0001, Add = 4'b0010, Sub = 4'b0011, Shr = 4'b0100, Shl = 4'b0101,
@@ -39,16 +40,16 @@ jal3 = 7’b1010011, jal4 = 7’b1010100, jal5 = 7’b1010101,
 in3  = 7’b1010110, in4  = 7’b1010111,
 out3 = 7’b1011000, out4 = 7’b1011001,
 mfhi3 = 7’b1011010, mfhi4 = 7’b1011011,
-mflo3 = 7’b1011100, mflo4 = 7’b1011101;
-////////////////////////////////////////////
-////////////////////////////////////////////
-////////////////////////////////////////////
-// add nop and halt
-////////////////////////////////////////////
-////////////////////////////////////////////
-////////////////////////////////////////////
+mflo3 = 7’b1011100, mflo4 = 7’b1011101
+halt3 = 7'b1011110;
 
 reg [6:0] Present_state = reset_n_state; 
+
+always @(stop)
+begin
+	if (stop)
+		Present_state = halt3;
+end
 
 always @(negedge clk, posedge reset_n) // finite state machine; if clk falling-edge or reset_n rising-edge
 begin
@@ -85,7 +86,7 @@ begin
 					5’b10110 : Present_state = out3;
 					5’b10111 : Present_state = mfhi3;
 					5’b11000 : Present_state = mflo3;
-					5’b11001 : Present_state = nop3;
+					5’b11001 : Present_state = reset_n_state; //nop does nothing
 					5’b11010 : Present_state = halt3;
 				endcase
 			end
@@ -203,13 +204,8 @@ begin
 			mflo3 : Present_state = mflo4;
 			mflo4 : Present_state = reset_n_state;
 			
-			////////////////////////////////////////////
-			////////////////////////////////////////////
-			////////////////////////////////////////////
-			// ADD NOP AND HALT
-			////////////////////////////////////////////
-			////////////////////////////////////////////
-			////////////////////////////////////////////
+			halt3 : Present_state = halt3;
+			
 		endcase
 	end
 end
@@ -238,6 +234,7 @@ begin
 			outport_in	<= 	0;
 			write			<= 	0;
 			c_out			<= 	0;
+			run			<=		1;
 			reset_n <= 0;
 			// reset_n <= 1;
 		end
@@ -640,14 +637,9 @@ begin
 			lo_out <= 1; gra <= 1; r_in <= 1;
 		end
 		///////////////////////////////////////////////////////////////////
-		
-		////////////////////////////////////////////
-		////////////////////////////////////////////
-		////////////////////////////////////////////
-		// ADD NOP AND HALT
-		////////////////////////////////////////////
-		////////////////////////////////////////////
-		//////////////////////////////////////////// 
+		halt3: begin
+			run <= 0;
+		end
 	endcase
 end
 endmodule
