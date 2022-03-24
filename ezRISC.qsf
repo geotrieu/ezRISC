@@ -115,64 +115,26 @@ set_global_assignment -name EDA_TEST_BENCH_NAME addi_datapath_tb -section_id eda
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id addi_datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "1000 ns" -section_id addi_datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME addi_datapath_tb -section_id addi_datapath_tb
-set_global_assignment -name MIF_FILE demo_ram_init.mif
-set_global_assignment -name VERILOG_FILE RAM.v
-set_global_assignment -name VERILOG_FILE datapath.v
-set_global_assignment -name VERILOG_FILE and_datapath_tb.v
-set_global_assignment -name VERILOG_FILE mux_32bit_2to1.v
-set_global_assignment -name VERILOG_FILE mdr.v
-set_global_assignment -name VERILOG_FILE gp_register.v
-set_global_assignment -name VERILOG_FILE alu_tb.v
-set_global_assignment -name VERILOG_FILE alu.v
-set_global_assignment -name VERILOG_FILE mux_32bit_32to1.v
-set_global_assignment -name VERILOG_FILE enc_32to5.v
-set_global_assignment -name VERILOG_FILE booth_32x32_mult.v
-set_global_assignment -name VERILOG_FILE divider_non_restoring.v
-set_global_assignment -name VERILOG_FILE add_datapath_tb.v
-set_global_assignment -name VERILOG_FILE sub_datapath_tb.v
-set_global_assignment -name VERILOG_FILE shr_datapath_tb.v
-set_global_assignment -name VERILOG_FILE shl_datapath_tb.v
-set_global_assignment -name VERILOG_FILE ror_datapath_tb.v
-set_global_assignment -name VERILOG_FILE rol_datapath_tb.v
-set_global_assignment -name VERILOG_FILE or_datapath_tb.v
-set_global_assignment -name VERILOG_FILE mul_datapath_tb.v
-set_global_assignment -name VERILOG_FILE div_datapath_tb.v
-set_global_assignment -name VERILOG_FILE neg_datapath_tb.v
-set_global_assignment -name VERILOG_FILE not_datapath_tb.v
-set_global_assignment -name VERILOG_FILE select_encode.v
-set_global_assignment -name VERILOG_FILE dec_4to16.v
-set_global_assignment -name VERILOG_FILE con_ff.v
-set_global_assignment -name VERILOG_FILE dec_2to4.v
-set_global_assignment -name VERILOG_FILE ld_datapath_tb.v
-set_global_assignment -name QIP_FILE RAM.qip
 set_global_assignment -name EDA_TEST_BENCH_NAME ld_datapath_tb -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id ld_datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "400 ns" -section_id ld_datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME ld_datapath_tb -section_id ld_datapath_tb
-set_global_assignment -name VERILOG_FILE st_datapath_tb.v
 set_global_assignment -name EDA_TEST_BENCH_NAME st_datapath_tb -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id st_datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "400 ns" -section_id st_datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME st_datapath_tb -section_id st_datapath_tb
-set_global_assignment -name VERILOG_FILE brxx_datapath_tb.v
 set_global_assignment -name EDA_TEST_BENCH_NAME brxx_datapath_tb -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id brxx_datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "400 ns" -section_id brxx_datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME brxx_datapath_tb -section_id brxx_datapath_tb
-set_global_assignment -name VERILOG_FILE jr_datapath_tb.v
 set_global_assignment -name EDA_TEST_BENCH_NAME jr_datapath_tb -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id jr_datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "200 ns" -section_id jr_datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME jr_datapath_tb -section_id jr_datapath_tb
-set_global_assignment -name VERILOG_FILE jal_datapath_tb.v
 set_global_assignment -name EDA_TEST_BENCH_NAME jal_datapath_tb -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id jal_datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "300 ns" -section_id jal_datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME jal_datapath_tb -section_id jal_datapath_tb
-set_global_assignment -name VERILOG_FILE ldi_datapath_tb.v
-set_global_assignment -name VERILOG_FILE addi_datapath_tb.v
-set_global_assignment -name VERILOG_FILE andi_datapath_tb.v
-set_global_assignment -name VERILOG_FILE ori_datapath_tb.v
 set_global_assignment -name EDA_TEST_BENCH_NAME andi_datapath_tb -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id andi_datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "1000 ns" -section_id andi_datapath_tb
@@ -181,22 +143,18 @@ set_global_assignment -name EDA_TEST_BENCH_NAME ori_datapath_tb -section_id eda_
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id ori_datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "1000 ns" -section_id ori_datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME ori_datapath_tb -section_id ori_datapath_tb
-set_global_assignment -name VERILOG_FILE mfhi_datapath_tb.v
 set_global_assignment -name EDA_TEST_BENCH_NAME mfhi_datapath_tb -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id mfhi_datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "1000 ns" -section_id mfhi_datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME mfhi_datapath_tb -section_id mfhi_datapath_tb
-set_global_assignment -name VERILOG_FILE mflo_datapath_tb.v
 set_global_assignment -name EDA_TEST_BENCH_NAME mflo_datapath_tb -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id mflo_datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "1000 ns" -section_id mflo_datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME mflo_datapath_tb -section_id mflo_datapath_tb
-set_global_assignment -name VERILOG_FILE out_datapath_tb.v
 set_global_assignment -name EDA_TEST_BENCH_NAME out_datapath_tb -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id out_datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "1000 ns" -section_id out_datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME out_datapath_tb -section_id out_datapath_tb
-set_global_assignment -name VERILOG_FILE in_datapath_tb.v
 set_global_assignment -name EDA_TEST_BENCH_NAME in_datapath_tb -section_id eda_simulation
 set_global_assignment -name EDA_DESIGN_INSTANCE_NAME NA -section_id in_datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME in_datapath_tb -section_id in_datapath_tb
@@ -227,3 +185,46 @@ set_global_assignment -name EDA_TEST_BENCH_FILE mflo_datapath_tb.v -section_id m
 set_global_assignment -name EDA_TEST_BENCH_FILE out_datapath_tb.v -section_id out_datapath_tb
 set_global_assignment -name EDA_TEST_BENCH_FILE in_datapath_tb.v -section_id in_datapath_tb
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name VERILOG_FILE control_unit.v
+set_global_assignment -name MIF_FILE demo_ram_init.mif
+set_global_assignment -name VERILOG_FILE RAM.v
+set_global_assignment -name VERILOG_FILE datapath.v
+set_global_assignment -name VERILOG_FILE and_datapath_tb.v
+set_global_assignment -name VERILOG_FILE mux_32bit_2to1.v
+set_global_assignment -name VERILOG_FILE mdr.v
+set_global_assignment -name VERILOG_FILE gp_register.v
+set_global_assignment -name VERILOG_FILE alu_tb.v
+set_global_assignment -name VERILOG_FILE alu.v
+set_global_assignment -name VERILOG_FILE mux_32bit_32to1.v
+set_global_assignment -name VERILOG_FILE enc_32to5.v
+set_global_assignment -name VERILOG_FILE booth_32x32_mult.v
+set_global_assignment -name VERILOG_FILE divider_non_restoring.v
+set_global_assignment -name VERILOG_FILE add_datapath_tb.v
+set_global_assignment -name VERILOG_FILE sub_datapath_tb.v
+set_global_assignment -name VERILOG_FILE shr_datapath_tb.v
+set_global_assignment -name VERILOG_FILE shl_datapath_tb.v
+set_global_assignment -name VERILOG_FILE ror_datapath_tb.v
+set_global_assignment -name VERILOG_FILE rol_datapath_tb.v
+set_global_assignment -name VERILOG_FILE or_datapath_tb.v
+set_global_assignment -name VERILOG_FILE mul_datapath_tb.v
+set_global_assignment -name VERILOG_FILE div_datapath_tb.v
+set_global_assignment -name VERILOG_FILE neg_datapath_tb.v
+set_global_assignment -name VERILOG_FILE not_datapath_tb.v
+set_global_assignment -name VERILOG_FILE select_encode.v
+set_global_assignment -name VERILOG_FILE dec_4to16.v
+set_global_assignment -name VERILOG_FILE con_ff.v
+set_global_assignment -name VERILOG_FILE dec_2to4.v
+set_global_assignment -name VERILOG_FILE ld_datapath_tb.v
+set_global_assignment -name QIP_FILE RAM.qip
+set_global_assignment -name VERILOG_FILE st_datapath_tb.v
+set_global_assignment -name VERILOG_FILE brxx_datapath_tb.v
+set_global_assignment -name VERILOG_FILE jr_datapath_tb.v
+set_global_assignment -name VERILOG_FILE jal_datapath_tb.v
+set_global_assignment -name VERILOG_FILE ldi_datapath_tb.v
+set_global_assignment -name VERILOG_FILE addi_datapath_tb.v
+set_global_assignment -name VERILOG_FILE andi_datapath_tb.v
+set_global_assignment -name VERILOG_FILE ori_datapath_tb.v
+set_global_assignment -name VERILOG_FILE mfhi_datapath_tb.v
+set_global_assignment -name VERILOG_FILE mflo_datapath_tb.v
+set_global_assignment -name VERILOG_FILE out_datapath_tb.v
+set_global_assignment -name VERILOG_FILE in_datapath_tb.v
