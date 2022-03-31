@@ -1,4 +1,4 @@
-module datapath_phase3(fast_clk, reset_n, bus_data);
+module datapath_phase3(fast_clk, reset_n, inport_ext_input, seven_seg_out_1, seven_seg_out_2);
 
 parameter REG_SIZE = 32;
 
@@ -43,7 +43,7 @@ wire r_out;
 wire ba_out;
 // I/O wires
 wire inport_out;
-wire [REG_SIZE - 1:0] inport_ext_input;
+input [REG_SIZE - 1:0] inport_ext_input;
 // Constant wires
 wire c_out;
 // MDR wires
@@ -63,7 +63,7 @@ reg stop = 0;
 wire run;
 
 // bus data wires
-output [REG_SIZE-1:0] bus_data;
+wire [REG_SIZE-1:0] bus_data;
 wire [REG_SIZE-1:0] outport_ext_output;
 wire con_out;
 
@@ -179,7 +179,6 @@ control_unit the_control_unit(
 	.write(write),
 	.alu_op(alu_op),
 	.inc_pc(inc_pc),
-	.outport_ext_output(outport_ext_output),
 	.ir_data(ir_data),
 	.clk(clk),
 	.reset_n(reset_n),
@@ -293,4 +292,20 @@ RAM the_ram(
 	.wren(write),
 	.q(m_data_in));
 
+/* Seven Segment Displays */
+output [7:0] seven_seg_out_1;
+output [7:0] seven_seg_out_2;
+wire [3:0] seven_seg_in_1;
+wire [3:0] seven_seg_in_2;
+assign seven_seg_in_1 = outport_ext_output[3:0];
+assign seven_seg_in_2 = outport_ext_output[7:4];
+
+Seven_Seg_Display_Out seven_seg_1(
+	.outputt(seven_seg_out_1),
+	.clk(clk),
+	.data(seven_seg_in_1));
+Seven_Seg_Display_Out seven_seg_2(
+	.outputt(seven_seg_out_2),
+	.clk(clk),
+	.data(seven_seg_in_2));
 endmodule
