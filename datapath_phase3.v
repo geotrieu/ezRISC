@@ -1,4 +1,4 @@
-module datapath_phase3(fast_clk, reset_n, inport_ext_input, seven_seg_out_1, seven_seg_out_2);
+module datapath_phase3(fast_clk, reset_n, stop, run, inport_ext_input, seven_seg_out_1, seven_seg_out_2);
 
 parameter REG_SIZE = 32;
 
@@ -9,15 +9,16 @@ input reset_n;
 
 reg clk2 = 0;
 reg clk = 0;
+reg [7:0] internal_counter = 8'd0;
 always @(posedge fast_clk)
 begin
-clk2 <= ~clk2;
+	internal_counter = internal_counter + 1;
+	if (internal_counter == 10) begin
+		clk <= ~clk;
+		internal_counter <= 0;
+	end
 end
 
-always @(posedge clk2)
-begin
-clk <= ~clk;
-end
 /* wires */
 // Load Enable wires
 wire hi_in;
@@ -57,10 +58,10 @@ wire inc_pc;
 // CON FF wires
 wire con_in;
 
-// more wires
+// control signals
 wire clear;
-reg stop = 0;
-wire run;
+input stop;
+output run;
 
 // bus data wires
 wire [REG_SIZE-1:0] bus_data;
@@ -286,7 +287,7 @@ alu the_alu(
 /* Memory Logic */
 
 RAM the_ram(
-	.address(mar_data),
+	.address(mar_data[8:0]),
 	.clock(fast_clk),
 	.data(mdr_data),
 	.wren(write),

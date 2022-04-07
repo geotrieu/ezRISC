@@ -11,7 +11,6 @@ input [31:0] ir_data,
 input stop,
 input clk, reset_n, con_ff, con_out);
 
-
 parameter And = 4'b0000, Or = 4'b0001, Add = 4'b0010, Sub = 4'b0011, Shr = 4'b0100, Shl = 4'b0101,
 	Ror = 4'b0110, Rol = 4'b0111, Mul = 4'b1000, Div = 4'b1001, Neg = 4'b1010, Not = 4'b1011;
 	
@@ -35,13 +34,15 @@ br5 = 7'b1000000, br6 = 7'b1000001, jr3  = 7'b1000010, jal3 = 7'b1000011,
 jal4 = 7'b1000100, in3 = 7'b1000101, out3 = 7'b1000110, mfhi3 = 7'b1000111,
 mflo3 = 7'b1001000, halt3 = 7'b1001001;
 
+reg [6:0] Present_state = reset_n_state;
 
-reg [6:0] Present_state = reset_n_state; 
+wire [4:0] op_code;
+assign op_code = ir_data[31:27];
 
 always @(negedge clk, negedge reset_n, posedge stop) // finite state machine; if clk falling-edge or reset_n fall-edge
 begin
 	if (reset_n == 1'b0) Present_state = reset_n_state;
-	else if (stop == 1) Present_state = halt3;
+	else if (stop) Present_state = halt3;
 	else
 	begin
 		case (Present_state)
@@ -49,131 +50,132 @@ begin
 			fetch0 : Present_state = fetch1;
 			fetch1 : Present_state = fetch2;
 			fetch2 : begin
-				case (ir_data[31:27]) // inst. decoding based on the opcode to set the next state
-					5'b00000 : Present_state = ld3;
-					5'b00001 : Present_state = ldi3;
-					5'b00010 : Present_state = st3;
-					5'b00011 : Present_state = add3;
-					5'b00100 : Present_state = sub3;
-					5'b00101 : Present_state = shr3;
-					5'b00110 : Present_state = shl3;
-					5'b00111 : Present_state = ror3;
-					5'b01000 : Present_state = rol3;
-					5'b01001 : Present_state = and3;
-					5'b01010 : Present_state = or3;
-					5'b01011 : Present_state = addi3;
-					5'b01100 : Present_state = andi3;
-					5'b01101 : Present_state = ori3;
-					5'b01110 : Present_state = mul3;
-					5'b01111 : Present_state = div3;
-					5'b10000 : Present_state = neg3;
-					5'b10001 : Present_state = not3;
-					5'b10010 : Present_state = br3;
-					5'b10011 : Present_state = jr3;
-					5'b10100 : Present_state = jal3;
-					5'b10101 : Present_state = in3;
-					5'b10110 : Present_state = out3;
-					5'b10111 : Present_state = mfhi3;
-					5'b11000 : Present_state = mflo3;
-					5'b11001 : Present_state = reset_n_state; // nop doesnt do anything
-					5'b11010 : Present_state = halt3;
+				case (op_code) // inst. decoding based on the opcode to set the next state
+					5'b00000 : Present_state <= ld3;
+					5'b00001 : Present_state <= ldi3;
+					5'b00010 : Present_state <= st3;
+					5'b00011 : Present_state <= add3;
+					5'b00100 : Present_state <= sub3;
+					5'b00101 : Present_state <= shr3;
+					5'b00110 : Present_state <= shl3;
+					5'b00111 : Present_state <= ror3;
+					5'b01000 : Present_state <= rol3;
+					5'b01001 : Present_state <= and3;
+					5'b01010 : Present_state <= or3;
+					5'b01011 : Present_state <= addi3;
+					5'b01100 : Present_state <= andi3;
+					5'b01101 : Present_state <= ori3;
+					5'b01110 : Present_state <= mul3;
+					5'b01111 : Present_state <= div3;
+					5'b10000 : Present_state <= neg3;
+					5'b10001 : Present_state <= not3;
+					5'b10010 : Present_state <= br3;
+					5'b10011 : Present_state <= jr3;
+					5'b10100 : Present_state <= jal3;
+					5'b10101 : Present_state <= in3;
+					5'b10110 : Present_state <= out3;
+					5'b10111 : Present_state <= mfhi3;
+					5'b11000 : Present_state <= mflo3;
+					5'b11001 : Present_state <= reset_n_state; // nop doesnt do anything
+					5'b11010 : Present_state <= halt3;
+					default: Present_state <= reset_n_state;
 				endcase
 			end
-			ld3 : Present_state = ld4;
-			ld4 : Present_state = ld5;
-			ld5 : Present_state = ld6;
-			ld6 : Present_state = ld7;
-			ld7 : Present_state = reset_n_state;
+			ld3 : Present_state <= ld4;
+			ld4 : Present_state <= ld5;
+			ld5 : Present_state <= ld6;
+			ld6 : Present_state <= ld7;
+			ld7 : Present_state <= reset_n_state;
 
-			ldi3 : Present_state = ldi4;
-			ldi4 : Present_state = ldi5;
-			ldi5 : Present_state = reset_n_state;
+			ldi3 : Present_state <= ldi4;
+			ldi4 : Present_state <= ldi5;
+			ldi5 : Present_state <= reset_n_state;
 			
-			st3 : Present_state = st4;
-			st4 : Present_state = st5;
-			st5 : Present_state = st6;
-			st6 : Present_state = st7;
-			st7 : Present_state = reset_n_state;
+			st3 : Present_state <= st4;
+			st4 : Present_state <= st5;
+			st5 : Present_state <= st6;
+			st6 : Present_state <= st7;
+			st7 : Present_state <= reset_n_state;
 			
-			add3 : Present_state = add4;
-			add4 : Present_state = add5;
-			add5 : Present_state = reset_n_state;
+			add3 : Present_state <= add4;
+			add4 : Present_state <= add5;
+			add5 : Present_state <= reset_n_state;
 			
-			sub3 : Present_state = sub4;
-			sub4 : Present_state = sub5;
-			sub5 : Present_state = reset_n_state;
+			sub3 : Present_state <= sub4;
+			sub4 : Present_state <= sub5;
+			sub5 : Present_state <= reset_n_state;
 			
-			shr3 : Present_state = shr4;
-			shr4 : Present_state = shr5;
-			shr5 : Present_state = reset_n_state;
+			shr3 : Present_state <= shr4;
+			shr4 : Present_state <= shr5;
+			shr5 : Present_state <= reset_n_state;
 			
-			shl3 : Present_state = shl4;
-			shl4 : Present_state = shl5;
-			shl5 : Present_state = reset_n_state;
+			shl3 : Present_state <= shl4;
+			shl4 : Present_state <= shl5;
+			shl5 : Present_state <= reset_n_state;
 			
-			ror3 : Present_state = ror3;
-			ror3 : Present_state = ror4;
-			ror4 : Present_state = reset_n_state;
+			ror3 : Present_state <= ror4;
+			ror4 : Present_state <= ror5;
+			ror5 : Present_state <= reset_n_state;
 			
-			rol3 : Present_state = rol4;
-			rol4 : Present_state = rol5;
-			rol5 : Present_state = reset_n_state;
+			rol3 : Present_state <= rol4;
+			rol4 : Present_state <= rol5;
+			rol5 : Present_state <= reset_n_state;
 			
-			and3 : Present_state = and4;
-			and4 : Present_state = and5;
-			and5 : Present_state = reset_n_state;
+			and3 : Present_state <= and4;
+			and4 : Present_state <= and5;
+			and5 : Present_state <= reset_n_state;
 			
-			or3 : Present_state = or4;
-			or4 : Present_state = or5;
-			or5 : Present_state = reset_n_state;
+			or3 : Present_state <= or4;
+			or4 : Present_state <= or5;
+			or5 : Present_state <= reset_n_state;
 			
-			addi3 : Present_state = addi4;
-			addi4 : Present_state = addi5;
-			addi5 : Present_state = reset_n_state;
+			addi3 : Present_state <= addi4;
+			addi4 : Present_state <= addi5;
+			addi5 : Present_state <= reset_n_state;
 			
-			andi3 : Present_state = andi4;
-			andi4 : Present_state = andi5;
-			andi5 : Present_state = reset_n_state;
+			andi3 : Present_state <= andi4;
+			andi4 : Present_state <= andi5;
+			andi5 : Present_state <= reset_n_state;
 			
-			ori3 : Present_state = ori4;
-			ori4 : Present_state = ori5;
-			ori5 : Present_state = reset_n_state;
+			ori3 : Present_state <= ori4;
+			ori4 : Present_state <= ori5;
+			ori5 : Present_state <= reset_n_state;
 			
-			mul3 : Present_state = mul4;
-			mul4 : Present_state = mul5;
-			mul5 : Present_state = mul6;
-			mul6 : Present_state = reset_n_state;
+			mul3 : Present_state <= mul4;
+			mul4 : Present_state <= mul5;
+			mul5 : Present_state <= mul6;
+			mul6 : Present_state <= reset_n_state;
 			
-			div3 : Present_state = div4;
-			div4 : Present_state = div5;
-			div5 : Present_state = div6;
-			div6 : Present_state = reset_n_state;
+			div3 : Present_state <= div4;
+			div4 : Present_state <= div5;
+			div5 : Present_state <= div6;
+			div6 : Present_state <= reset_n_state;
 			
-			neg3 : Present_state = neg4;
-			neg4 : Present_state = reset_n_state;
+			neg3 : Present_state <= neg4;
+			neg4 : Present_state <= reset_n_state;
 			
-			not3 : Present_state = not4;
-			not4 : Present_state = reset_n_state;
+			not3 : Present_state <= not4;
+			not4 : Present_state <= reset_n_state;
 			
-			br3 : Present_state = br4;
-			br4 : Present_state = br5;
-			br5 : Present_state = br6;
-			br6 : Present_state = reset_n_state;
+			br3 : Present_state <= br4;
+			br4 : Present_state <= br5;
+			br5 : Present_state <= br6;
+			br6 : Present_state <= reset_n_state;
 			
-			jr3 : Present_state = reset_n_state;
+			jr3 : Present_state <= reset_n_state;
 			
-			jal3 : Present_state = jal4;
-			jal4 : Present_state = reset_n_state;
+			jal3 : Present_state <= jal4;
+			jal4 : Present_state <= reset_n_state;
 			
-			in3 : Present_state = reset_n_state;
+			in3 : Present_state <= reset_n_state;
 			
-			out3 : Present_state = reset_n_state;
+			out3 : Present_state <= reset_n_state;
 			
-			mfhi3 : Present_state = reset_n_state;
+			mfhi3 : Present_state <= reset_n_state;
 			
-			mflo3 : Present_state = reset_n_state;
+			mflo3 : Present_state <= reset_n_state;
 			
-			halt3 : Present_state = halt3;
+			halt3 : Present_state <= halt3;
 		endcase
 	end
 end
@@ -212,8 +214,6 @@ begin
 			inc_pc 		<= 	0;
 			con_in		<=		0;
 			
-			
-
 		end
 		fetch0: begin
 			pc_out <= 1; mar_in <= 1; inc_pc <= 1; z_in <= 1; alu_op <= Add;
@@ -341,11 +341,11 @@ begin
 			mdr_out <= 0; ir_in <= 0;
 			grb <= 1; r_out <= 1; y_in <= 1;
 		end
-		ror3: begin
+		ror4: begin
 			grb <= 0; r_out <= 0; y_in <= 0;
 			grc <= 1; r_out <= 1; alu_op <= Ror; z_in <= 1;
 		end
-		ror4: begin
+		ror5: begin
 			grc <= 0; r_out <= 0; z_in <= 0;
 			z_low_out <= 1; gra <= 1; r_in <= 1;
 		end
