@@ -341,11 +341,11 @@ begin
 			mdr_out <= 0; ir_in <= 0;
 			grb <= 1; r_out <= 1; y_in <= 1;
 		end
-		ror3: begin
+		ror4: begin
 			grb <= 0; r_out <= 0; y_in <= 0;
 			grc <= 1; r_out <= 1; alu_op <= Ror; z_in <= 1;
 		end
-		ror4: begin
+		ror5: begin
 			grc <= 0; r_out <= 0; z_in <= 0;
 			z_low_out <= 1; gra <= 1; r_in <= 1;
 		end
