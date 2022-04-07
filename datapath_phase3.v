@@ -286,7 +286,7 @@ alu the_alu(
 /* Memory Logic */
 
 RAM the_ram(
-	.address(mar_data),
+	.address(mar_data[8:0]),
 	.clock(fast_clk),
 	.data(mdr_data),
 	.wren(write),

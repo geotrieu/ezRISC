@@ -11,7 +11,6 @@ input [31:0] ir_data,
 input stop,
 input clk, reset_n, con_ff, con_out);
 
-
 parameter And = 4'b0000, Or = 4'b0001, Add = 4'b0010, Sub = 4'b0011, Shr = 4'b0100, Shl = 4'b0101,
 	Ror = 4'b0110, Rol = 4'b0111, Mul = 4'b1000, Div = 4'b1001, Neg = 4'b1010, Not = 4'b1011;
 	
@@ -34,7 +33,6 @@ not3  = 7'b0111100, not4  = 7'b0111101, br3  = 7'b0111110, br4  = 7'b0111111,
 br5 = 7'b1000000, br6 = 7'b1000001, jr3  = 7'b1000010, jal3 = 7'b1000011,
 jal4 = 7'b1000100, in3 = 7'b1000101, out3 = 7'b1000110, mfhi3 = 7'b1000111,
 mflo3 = 7'b1001000, halt3 = 7'b1001001;
-
 
 reg [6:0] Present_state = reset_n_state; 
 
@@ -212,8 +210,6 @@ begin
 			inc_pc 		<= 	0;
 			con_in		<=		0;
 			
-			
-
 		end
 		fetch0: begin
 			pc_out <= 1; mar_in <= 1; inc_pc <= 1; z_in <= 1; alu_op <= Add;
