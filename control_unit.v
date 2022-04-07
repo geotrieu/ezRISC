@@ -111,9 +111,9 @@ begin
 			shl4 : Present_state = shl5;
 			shl5 : Present_state = reset_n_state;
 			
-			ror3 : Present_state = ror3;
 			ror3 : Present_state = ror4;
-			ror4 : Present_state = reset_n_state;
+			ror4 : Present_state = ror5;
+			ror5 : Present_state = reset_n_state;
 			
 			rol3 : Present_state = rol4;
 			rol4 : Present_state = rol5;
