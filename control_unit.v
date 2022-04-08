@@ -39,6 +39,8 @@ reg [6:0] Present_state = reset_n_state;
 wire [4:0] op_code;
 assign op_code = ir_data[31:27];
 
+reg [31:0] num_instructions = 32'd0;
+
 always @(negedge clk, negedge reset_n, posedge stop) // finite state machine; if clk falling-edge or reset_n fall-edge
 begin
 	if (reset_n == 1'b0) Present_state = reset_n_state;
@@ -216,6 +218,7 @@ begin
 			
 		end
 		fetch0: begin
+			num_instructions <= num_instructions + 1;
 			pc_out <= 1; mar_in <= 1; inc_pc <= 1; z_in <= 1; alu_op <= Add;
 			// pc_out <= 0; mar_in <= 0; inc_pc <= 0; z_in <= 0;
 		end
